@@ -23,7 +23,6 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSPhotoLibraryUsageDescription: "dishd needs photo access so you can show how your cooking turned out."
         NSCameraUsageDescription: "dishd uses the camera to photograph what you made."
-        NSContactsUsageDescription: "dishd checks your contacts to help you find friends. Nothing is shared without you."
         UIAppFonts: [YoungSerif-Regular.ttf]
     settings:
       base:

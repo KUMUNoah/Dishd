@@ -356,6 +356,7 @@ struct SettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isPrivate = false
     @State private var confirmingDelete = false
+    @State private var deleteFailed = false
 
     var body: some View {
         NavigationStack {
@@ -382,6 +383,10 @@ struct SettingsSheet: View {
                         BlockedUsersView()
                     }
                 }
+                Section("About") {
+                    Link("Terms of Service", destination: Legal.termsURL)
+                    Link("Privacy Policy", destination: Legal.privacyURL)
+                }
                 Section {
                     Button("Log out") {
                         Task { await appState.signOut() }
@@ -407,11 +412,19 @@ struct SettingsSheet: View {
             ) {
                 Button("Delete my account", role: .destructive) {
                     Task {
-                        try? await SocialService.deleteAccount()
-                        await appState.signOut()
+                        do {
+                            try await SocialService.deleteAccount()
+                            await appState.signOut()
+                        } catch {
+                            deleteFailed = true
+                        }
                     }
                 }
             }
+        }
+        .alert("Couldn't delete your account. Check your connection and try again.",
+               isPresented: $deleteFailed) {
+            Button("OK", role: .cancel) {}
         }
         .onAppear { isPrivate = appState.profile?.isPrivate ?? false }
     }

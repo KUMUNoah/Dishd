@@ -85,6 +85,13 @@ struct SignUpView: View {
                     Task { await submit() }
                 }
                 .padding(.top, 8)
+
+                Text("By creating an account you agree to our [Terms of Service](\(Legal.termsURL)) and [Privacy Policy](\(Legal.privacyURL)).")
+                    .font(.system(size: 12))
+                    .foregroundStyle(DishdColor.taupe)
+                    .tint(DishdColor.terracotta)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 4)
             }
             .padding(24)
         }

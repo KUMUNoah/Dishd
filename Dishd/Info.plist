@@ -22,8 +22,6 @@
 	<string>1</string>
 	<key>NSCameraUsageDescription</key>
 	<string>dishd uses the camera to photograph what you made.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>dishd checks your contacts to help you find friends. Nothing is shared without you.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>dishd needs photo access so you can show how your cooking turned out.</string>
 	<key>UIAppFonts</key>

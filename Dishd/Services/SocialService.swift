@@ -216,8 +216,19 @@ enum SocialService {
             .execute()
     }
 
-    /// Server-side RPC deletes the auth user; cascades wipe all app data.
+    /// Removes the user's uploaded files, then the server-side RPC deletes the
+    /// auth user; cascades wipe all app data. File cleanup is best-effort —
+    /// a storage hiccup shouldn't leave the account undeletable.
     static func deleteAccount() async throws {
+        if let me = supabase.auth.currentUser?.id.uuidString.lowercased() {
+            for bucket in ["avatars", "review-photos"] {
+                if let files = try? await supabase.storage.from(bucket).list(path: me),
+                   !files.isEmpty {
+                    try? await supabase.storage.from(bucket)
+                        .remove(paths: files.map { "\(me)/\($0.name)" })
+                }
+            }
+        }
         try await supabase.rpc("delete_user").execute()
         try? await supabase.auth.signOut()
     }

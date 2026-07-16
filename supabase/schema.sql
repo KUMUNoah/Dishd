@@ -285,6 +285,18 @@ create trigger on_like_created
   after insert on public.likes
   for each row execute function public.handle_new_like();
 
+-- 5) Account deletion (App Store 5.1.1). Runs as definer so it can delete the
+--    auth.users row; profile + all app data cascade. Storage files can't be
+--    deleted from SQL (Supabase blocks it) — the client removes its own files
+--    via the Storage API before calling this.
+create or replace function public.delete_user()
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  delete from auth.users where id = auth.uid();
+end $$;
+revoke execute on function public.delete_user() from anon, public;
+grant execute on function public.delete_user() to authenticated;
+
 -- ---------- STORAGE ----------
 
 insert into storage.buckets (id, name, public) values
