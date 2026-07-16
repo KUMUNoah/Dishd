@@ -1,0 +1,32 @@
+name: Dishd
+options:
+  bundleIdPrefix: com.noahtakashima
+  deploymentTarget:
+    iOS: "17.0"
+packages:
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: 2.0.0
+targets:
+  Dishd:
+    type: application
+    platform: iOS
+    sources: [Dishd]
+    dependencies:
+      - package: Supabase
+        product: Supabase
+    info:
+      path: Dishd/Info.plist
+      properties:
+        CFBundleDisplayName: dishd
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSPhotoLibraryUsageDescription: "dishd needs photo access so you can show how your cooking turned out."
+        NSCameraUsageDescription: "dishd uses the camera to photograph what you made."
+        NSContactsUsageDescription: "dishd checks your contacts to help you find friends. Nothing is shared without you."
+        UIAppFonts: [YoungSerif-Regular.ttf]
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: false
