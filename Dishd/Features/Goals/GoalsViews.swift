@@ -74,6 +74,12 @@ struct GoalsCard: View {
                 .padding(.horizontal, 16)
             } else if loaded {
                 setUpPrompt
+            } else {
+                // Placeholder so the view has size pre-load — .task never
+                // fires on an empty Group.
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
             }
         }
         .task { await load() }
