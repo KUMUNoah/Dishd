@@ -61,11 +61,19 @@ struct GoalsCard: View {
     var body: some View {
         Group {
             if let goals, let progress {
+                // Yearly goal, monthly pacing: the bar tracks this month
+                // against 1/12 of the yearly target.
+                let monthlyTarget = max(1, Int((Double(goals.newRecipesPerYear) / 12).rounded()))
                 VStack(spacing: 12) {
                     goalRow("This week", value: progress.cookedThisWeek,
                             target: goals.cookPerWeek, noun: "cooked")
-                    goalRow("This year", value: progress.newRecipesThisYear,
-                            target: goals.newRecipesPerYear, noun: "new recipes")
+                    VStack(alignment: .leading, spacing: 4) {
+                        goalRow("This month", value: progress.newRecipesThisMonth,
+                                target: monthlyTarget, noun: "new recipes")
+                        Text("\(progress.newRecipesThisYear) of \(goals.newRecipesPerYear) for the year")
+                            .font(.system(size: 11))
+                            .foregroundStyle(DishdColor.taupe)
+                    }
                 }
                 .padding(14)
                 .background(DishdColor.card)

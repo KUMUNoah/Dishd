@@ -29,22 +29,27 @@ enum GoalsService {
 
     struct Progress {
         let cookedThisWeek: Int
+        let newRecipesThisMonth: Int
         let newRecipesThisYear: Int
     }
 
     /// Reviews are the "cooked it" signal, and (user, recipe) is unique,
-    /// so this year's review count == new recipes tried this year.
+    /// so review counts == new recipes tried in the period.
     static func progress() async -> Progress {
         guard let me = supabase.auth.currentUser?.id else {
-            return Progress(cookedThisWeek: 0, newRecipesThisYear: 0)
+            return Progress(cookedThisWeek: 0, newRecipesThisMonth: 0, newRecipesThisYear: 0)
         }
         let cal = Calendar.current
         let now = Date()
         let weekStart = cal.dateInterval(of: .weekOfYear, for: now)?.start ?? now
+        let monthStart = cal.dateInterval(of: .month, for: now)?.start ?? now
         let yearStart = cal.dateInterval(of: .year, for: now)?.start ?? now
         async let week = reviewCount(userId: me, since: weekStart)
+        async let month = reviewCount(userId: me, since: monthStart)
         async let year = reviewCount(userId: me, since: yearStart)
-        return await Progress(cookedThisWeek: week, newRecipesThisYear: year)
+        return await Progress(cookedThisWeek: week,
+                              newRecipesThisMonth: month,
+                              newRecipesThisYear: year)
     }
 
     private static func reviewCount(userId: UUID, since: Date) async -> Int {
