@@ -27,6 +27,10 @@ struct ProfileView: View {
             VStack(spacing: 16) {
                 header
 
+                if isOwn {
+                    GoalsCard()
+                }
+
                 if isBlocked {
                     blockedState
                 } else if contentVisible {
@@ -376,6 +380,9 @@ struct SettingsSheet: View {
                             try? await SocialService.setPrivate(isPrivate)
                             await appState.loadProfile()
                         }
+                    }
+                    NavigationLink("Cooking goals") {
+                        GoalsEditorView()
                     }
                 }
                 Section("Privacy and safety") {

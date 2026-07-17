@@ -11,7 +11,7 @@ struct OnboardingFlow: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("STEP \(step) OF 3")
+                Text("STEP \(step) OF 4")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(DishdColor.terracotta)
                 Spacer()
@@ -22,6 +22,7 @@ struct OnboardingFlow: View {
             switch step {
             case 1: FindFriendsStep(onContinue: { step = 2 })
             case 2: TasteStep(cuisines: $cuisines, onContinue: { step = 3 })
+            case 3: GoalsStep(onContinue: { step = 4 })
             default: StarterStep(cuisines: cuisines, onDone: finish)
             }
         }
@@ -176,7 +177,53 @@ private struct TasteStep: View {
     }
 }
 
-// MARK: - Step 3 · Starter recipes
+// MARK: - Step 3 · Cooking goals
+
+private struct GoalsStep: View {
+    var onContinue: () -> Void
+    @State private var cookPerWeek: Int?
+    @State private var newRecipesPerMonth: Int?
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Set your cooking goals")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(DishdColor.espresso)
+                    Text("We'll track your progress on your profile. Change these anytime in Settings.")
+                        .font(.system(size: 14))
+                        .foregroundStyle(DishdColor.taupe)
+                }
+
+                GoalsPicker(cookPerWeek: $cookPerWeek,
+                            newRecipesPerMonth: $newRecipesPerMonth)
+
+                PrimaryButton(title: "Continue",
+                              isEnabled: cookPerWeek != nil && newRecipesPerMonth != nil) {
+                    if let cook = cookPerWeek, let monthly = newRecipesPerMonth {
+                        Task {
+                            try? await GoalsService.set(Goals(cookPerWeek: cook,
+                                                              newRecipesPerMonth: monthly))
+                        }
+                        Analytics.log("goals_set", ["cook_per_week": "\(cook)",
+                                                    "new_recipes_per_month": "\(monthly)"])
+                    }
+                    onContinue()
+                }
+                .padding(.top, 8)
+
+                Button("Skip for now", action: onContinue)
+                    .font(.system(size: 13))
+                    .foregroundStyle(DishdColor.taupe)
+                    .frame(maxWidth: .infinity)
+            }
+            .padding(24)
+        }
+    }
+}
+
+// MARK: - Step 4 · Starter recipes
 
 private struct StarterStep: View {
     let cuisines: Set<String>
