@@ -291,7 +291,7 @@ create trigger on_like_created
 create table public.goals (
   user_id               uuid primary key references public.profiles on delete cascade,
   cook_per_week         int not null check (cook_per_week between 1 and 21),
-  new_recipes_per_month int not null check (new_recipes_per_month between 1 and 100),
+  new_recipes_per_year  int not null check (new_recipes_per_year between 1 and 1000),
   updated_at            timestamptz not null default now()
 );
 alter table public.goals enable row level security;
