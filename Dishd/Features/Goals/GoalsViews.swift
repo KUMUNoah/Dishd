@@ -1,27 +1,28 @@
 import SwiftUI
 
-/// The two goal questions as chip rows. Shared by onboarding and Settings.
+/// The two goal questions as sliders. Shared by onboarding and Settings.
 struct GoalsPicker: View {
-    @Binding var cookPerWeek: Int?
-    @Binding var newRecipesPerMonth: Int?
+    @Binding var cookPerWeek: Int
+    @Binding var newRecipesPerMonth: Int
 
-    static let weekOptions = [1, 2, 3, 5, 7]
-    static let monthOptions = [2, 4, 6, 10]
+    static let maxValue = 21
+    static let defaultCookPerWeek = 3
+    static let defaultNewRecipesPerMonth = 4
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 6) {
                 question("How often do you want to cook for yourself?")
-                chipRow(Self.weekOptions, selection: $cookPerWeek) { "\($0)× a week" }
+                valueLabel("\(cookPerWeek)× a week")
+                slider($cookPerWeek)
             }
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
                 question("How many new recipes do you want to try a month?")
-                chipRow(Self.monthOptions, selection: $newRecipesPerMonth) { "\($0)" }
-                if let monthly = newRecipesPerMonth {
-                    Text("That's \(monthly * 12) new dishes a year.")
-                        .font(.system(size: 13))
-                        .foregroundStyle(DishdColor.taupe)
-                }
+                valueLabel("\(newRecipesPerMonth) a month")
+                slider($newRecipesPerMonth)
+                Text("That's \(newRecipesPerMonth * 12) new dishes a year.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(DishdColor.taupe)
             }
         }
     }
@@ -32,22 +33,20 @@ struct GoalsPicker: View {
             .foregroundStyle(DishdColor.espresso)
     }
 
-    private func chipRow(_ options: [Int], selection: Binding<Int?>,
-                         label: @escaping (Int) -> String) -> some View {
-        HStack(spacing: 8) {
-            ForEach(options, id: \.self) { option in
-                let selected = selection.wrappedValue == option
-                Text(label(option))
-                    .font(.system(size: 13, weight: selected ? .semibold : .regular))
-                    .foregroundStyle(selected ? .white : DishdColor.espresso)
-                    .padding(.vertical, 9)
-                    .frame(maxWidth: .infinity)
-                    .background(selected ? DishdColor.terracotta : DishdColor.card)
-                    .clipShape(Capsule())
-                    .overlay(Capsule().stroke(selected ? .clear : DishdColor.border, lineWidth: 0.5))
-                    .onTapGesture { selection.wrappedValue = option }
-            }
-        }
+    private func valueLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(DishdColor.terracotta)
+            .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private func slider(_ value: Binding<Int>) -> some View {
+        Slider(
+            value: Binding(get: { Double(value.wrappedValue) },
+                           set: { value.wrappedValue = Int($0.rounded()) }),
+            in: 1...Double(Self.maxValue), step: 1
+        )
+        .tint(DishdColor.terracotta)
     }
 }
 
@@ -149,8 +148,8 @@ struct GoalsCard: View {
 
 /// Settings → Cooking goals. Saves on every change.
 struct GoalsEditorView: View {
-    @State private var cookPerWeek: Int?
-    @State private var newRecipesPerMonth: Int?
+    @State private var cookPerWeek = GoalsPicker.defaultCookPerWeek
+    @State private var newRecipesPerMonth = GoalsPicker.defaultNewRecipesPerMonth
     @State private var loaded = false
 
     var body: some View {
@@ -174,9 +173,10 @@ struct GoalsEditorView: View {
     }
 
     private func save() {
-        guard loaded, let cook = cookPerWeek, let monthly = newRecipesPerMonth else { return }
+        guard loaded else { return }
         Task {
-            try? await GoalsService.set(Goals(cookPerWeek: cook, newRecipesPerMonth: monthly))
+            try? await GoalsService.set(Goals(cookPerWeek: cookPerWeek,
+                                              newRecipesPerMonth: newRecipesPerMonth))
         }
     }
 }

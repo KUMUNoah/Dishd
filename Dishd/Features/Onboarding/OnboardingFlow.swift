@@ -181,8 +181,8 @@ private struct TasteStep: View {
 
 private struct GoalsStep: View {
     var onContinue: () -> Void
-    @State private var cookPerWeek: Int?
-    @State private var newRecipesPerMonth: Int?
+    @State private var cookPerWeek = GoalsPicker.defaultCookPerWeek
+    @State private var newRecipesPerMonth = GoalsPicker.defaultNewRecipesPerMonth
 
     var body: some View {
         ScrollView {
@@ -199,16 +199,12 @@ private struct GoalsStep: View {
                 GoalsPicker(cookPerWeek: $cookPerWeek,
                             newRecipesPerMonth: $newRecipesPerMonth)
 
-                PrimaryButton(title: "Continue",
-                              isEnabled: cookPerWeek != nil && newRecipesPerMonth != nil) {
-                    if let cook = cookPerWeek, let monthly = newRecipesPerMonth {
-                        Task {
-                            try? await GoalsService.set(Goals(cookPerWeek: cook,
-                                                              newRecipesPerMonth: monthly))
-                        }
-                        Analytics.log("goals_set", ["cook_per_week": "\(cook)",
-                                                    "new_recipes_per_month": "\(monthly)"])
-                    }
+                PrimaryButton(title: "Continue") {
+                    let goals = Goals(cookPerWeek: cookPerWeek,
+                                      newRecipesPerMonth: newRecipesPerMonth)
+                    Task { try? await GoalsService.set(goals) }
+                    Analytics.log("goals_set", ["cook_per_week": "\(cookPerWeek)",
+                                                "new_recipes_per_month": "\(newRecipesPerMonth)"])
                     onContinue()
                 }
                 .padding(.top, 8)
