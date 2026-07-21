@@ -15,6 +15,7 @@
 		2233A314BF68B1FF5FB37428 /* YoungSerif-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D78DA7342B03C92740D07C4D /* YoungSerif-Regular.ttf */; };
 		241D80B7100EFE9BCE518BE9 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246DEB2230579A5CCF547F4A /* Colors.swift */; };
 		2890D890B5C9B535790823BA /* FeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BF3A27C880D7E7823DF2B5 /* FeedService.swift */; };
+		3F7FFA63271733C9FFE03406 /* ToolbarStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E9C872E0FAF111DEF82BDF /* ToolbarStyle.swift */; };
 		42116C56135DBEB6BE528036 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7AFC5B262873A64066B859 /* Models.swift */; };
 		4A4681738A1A18983C59BE00 /* SaveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45FB4607394A91FC6909773 /* SaveSheet.swift */; };
 		4A8437C2CE0A496235A95645 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E15FF953A0325E990BBCDD4 /* PrimaryButton.swift */; };
@@ -40,6 +41,7 @@
 		C287C96AD837D3C53B0DD0FA /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA03E33626B61281A0533F6 /* ProfileView.swift */; };
 		CCDFC552F52118907BC6B378 /* SegmentedChips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D8848D646DD6CEDEAC6CC3 /* SegmentedChips.swift */; };
 		D0D8950CEFD9861942DB5D40 /* StarRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3A4BBF722BDD2DC2D79FE6 /* StarRating.swift */; };
+		DEED9475724AFD30E17A21AE /* DishdTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFC8FC09198B62B6E633B64 /* DishdTabBar.swift */; };
 		DFD82895A0E15C36F34AA576 /* GoalsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006EA2944BBEADC4E94ECE90 /* GoalsService.swift */; };
 		E7FF919889FBE278007036A7 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6EFC4708E66BA78FAA95D /* WelcomeView.swift */; };
 		EA05C76DC11E857A992F8F02 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FAE2A52A4128E0E8E8558F3 /* AppState.swift */; };
@@ -64,8 +66,10 @@
 		5C9E703E3064B1434E4F5977 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
 		63D8848D646DD6CEDEAC6CC3 /* SegmentedChips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedChips.swift; sourceTree = "<group>"; };
 		64818098E84C36AF8711D4D2 /* GoalsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsViews.swift; sourceTree = "<group>"; };
+		6EFC8FC09198B62B6E633B64 /* DishdTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishdTabBar.swift; sourceTree = "<group>"; };
 		6F7CB8C8E2A54B65A938E11F /* RecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeService.swift; sourceTree = "<group>"; };
 		6FFD7F35D56C7685CAC0E9F1 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		72E9C872E0FAF111DEF82BDF /* ToolbarStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarStyle.swift; sourceTree = "<group>"; };
 		733BEFFBA2927F717096E682 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7CD8BF04A5581C5C886588CF /* Dishd.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Dishd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DE8F008E7A297162599924C /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				246DEB2230579A5CCF547F4A /* Colors.swift */,
+				72E9C872E0FAF111DEF82BDF /* ToolbarStyle.swift */,
 				9CB3F4AFF9FACFE0E784F3CF /* Typography.swift */,
 				FB458E9BBE3A0B8457485E13 /* Components */,
 			);
@@ -277,6 +282,7 @@
 		FB458E9BBE3A0B8457485E13 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				6EFC8FC09198B62B6E633B64 /* DishdTabBar.swift */,
 				EC5DB560EC5B50C2B0E1D17C /* FeedCard.swift */,
 				CE1D18C151ED819066E3AC65 /* ModerationSheet.swift */,
 				8E15FF953A0325E990BBCDD4 /* PrimaryButton.swift */,
@@ -365,6 +371,7 @@
 				B40FDD94566C48A5503E256F /* CollectionView.swift in Sources */,
 				241D80B7100EFE9BCE518BE9 /* Colors.swift in Sources */,
 				BBEA579EA2694B4F69591656 /* DishdApp.swift in Sources */,
+				DEED9475724AFD30E17A21AE /* DishdTabBar.swift in Sources */,
 				740B1E871B8E3A476A229CF5 /* FeedCard.swift in Sources */,
 				2890D890B5C9B535790823BA /* FeedService.swift in Sources */,
 				67A5C83A57908C13F4D151E4 /* FeedView.swift in Sources */,
@@ -392,6 +399,7 @@
 				93210187C30CD00FAD16B83B /* SocialService.swift in Sources */,
 				D0D8950CEFD9861942DB5D40 /* StarRating.swift in Sources */,
 				4BB9E73128F4D0D227D599CC /* SupabaseClient.swift in Sources */,
+				3F7FFA63271733C9FFE03406 /* ToolbarStyle.swift in Sources */,
 				9908187B0EB37278DE419C75 /* Typography.swift in Sources */,
 				E7FF919889FBE278007036A7 /* WelcomeView.swift in Sources */,
 			);

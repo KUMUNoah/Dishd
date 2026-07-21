@@ -66,6 +66,7 @@ struct CollectionView: View {
                             .foregroundStyle(DishdColor.terracotta)
                     }
                 }
+                .plainToolbarItem()
             }
             .sheet(isPresented: $showSaveSheet) {
                 SaveSheet(onSaved: { Task { await load() } },

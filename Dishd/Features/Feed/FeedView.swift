@@ -40,7 +40,8 @@ struct FeedView: View {
             .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Wordmark(size: 24) }
+                ToolbarItem(placement: .topBarLeading) { Wordmark(size: 24).fixedSize() }
+                    .plainToolbarItem()
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         NotificationsView()
@@ -61,6 +62,7 @@ struct FeedView: View {
                             }
                     }
                 }
+                .plainToolbarItem()
             }
             .navigationDestination(item: $openRecipe) { recipe in
                 RecipeDetailView(recipe: recipe)

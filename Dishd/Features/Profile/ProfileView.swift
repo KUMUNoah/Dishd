@@ -62,6 +62,7 @@ struct ProfileView: View {
                             .foregroundStyle(DishdColor.espresso)
                     }
                 }
+                .plainToolbarItem()
             } else {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { reportingUser = true } label: {
@@ -70,6 +71,7 @@ struct ProfileView: View {
                             .foregroundStyle(DishdColor.espresso)
                     }
                 }
+                .plainToolbarItem()
             }
         }
         .sheet(isPresented: $reportingUser) {
@@ -487,6 +489,7 @@ struct SettingsSheet: View {
                     Button("Done") { dismiss() }
                         .foregroundStyle(DishdColor.terracotta)
                 }
+                .plainToolbarItem()
             }
             .confirmationDialog(
                 "Delete your account? Your recipes, reviews, and followers are permanently erased. This can't be undone.",
