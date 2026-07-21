@@ -88,8 +88,8 @@ struct ReviewComposerView: View {
                 }
                 .padding(20)
             }
-            .background(DishdColor.cream.ignoresSafeArea())
-            .toolbarBackground(DishdColor.cream, for: .navigationBar)
+            .background(DishdColor.screen.ignoresSafeArea())
+            .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle(recipe.title)
             .navigationBarTitleDisplayMode(.inline)

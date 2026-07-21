@@ -26,7 +26,7 @@ struct OnboardingFlow: View {
             default: StarterStep(cuisines: cuisines, onDone: finish)
             }
         }
-        .background(DishdColor.cream.ignoresSafeArea())
+        .background(DishdColor.screen.ignoresSafeArea())
     }
 
     private func finish() {

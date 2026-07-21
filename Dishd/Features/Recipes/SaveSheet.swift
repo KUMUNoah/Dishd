@@ -99,7 +99,7 @@ struct SaveSheet: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 20)
-        .background(DishdColor.cream)
+        .background(DishdColor.screen)
         .presentationDetents([.medium])
         .presentationDragIndicator(.hidden)
     }

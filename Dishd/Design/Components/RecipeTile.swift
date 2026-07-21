@@ -26,8 +26,8 @@ struct RecipeTile: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(DishdColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(DishdColor.border, lineWidth: 0.5))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(DishdColor.border, lineWidth: 1))
     }
 
     @ViewBuilder

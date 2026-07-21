@@ -95,7 +95,7 @@ struct SignUpView: View {
             }
             .padding(24)
         }
-        .background(DishdColor.cream)
+        .background(DishdColor.screen)
         .navigationTitle("Create account")
         .navigationBarTitleDisplayMode(.inline)
     }

@@ -39,8 +39,8 @@ struct NotificationsView: View {
             .padding(16)
             .frame(maxWidth: .infinity)
         }
-        .background(DishdColor.cream.ignoresSafeArea())
-        .toolbarBackground(DishdColor.cream, for: .navigationBar)
+        .background(DishdColor.screen.ignoresSafeArea())
+        .toolbarBackground(DishdColor.screen, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)

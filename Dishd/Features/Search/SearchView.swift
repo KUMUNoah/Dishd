@@ -44,8 +44,8 @@ struct SearchView: View {
                             }
                             .padding(12)
                             .background(DishdColor.card)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(DishdColor.border, lineWidth: 0.5))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay(RoundedRectangle(cornerRadius: 16).stroke(DishdColor.border, lineWidth: 1))
                         }
                         .buttonStyle(.plain)
                     }
@@ -53,8 +53,8 @@ struct SearchView: View {
                 .padding(16)
                 .frame(maxWidth: .infinity)
             }
-            .background(DishdColor.cream.ignoresSafeArea())
-            .toolbarBackground(DishdColor.cream, for: .navigationBar)
+            .background(DishdColor.screen.ignoresSafeArea())
+            .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle("Search")
             .navigationBarTitleDisplayMode(.inline)

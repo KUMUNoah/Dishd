@@ -12,8 +12,7 @@ struct FeedCard: View {
     @State private var liked: Bool
     @State private var likeCount: Int
     @State private var reported = false
-    @State private var reportingReview = false
-    @State private var confirmingBlock = false
+    @State private var showModeration = false
     @State private var reportThanks = false
 
     init(item: FeedItem, currentUserId: UUID?,
@@ -37,8 +36,8 @@ struct FeedCard: View {
             footer
         }
         .background(DishdColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(DishdColor.border, lineWidth: 0.5))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(DishdColor.border, lineWidth: 1))
     }
 
     private var header: some View {
@@ -62,22 +61,11 @@ struct FeedCard: View {
             Spacer()
 
             if item.userId != currentUserId {
-                Menu {
-                    Button(role: .destructive) {
-                        reportingReview = true
-                    } label: {
-                        Label(reported ? "Reported" : "Report review", systemImage: "flag")
-                    }
-                    .disabled(reported)
-
-                    Button(role: .destructive) {
-                        confirmingBlock = true
-                    } label: {
-                        Label("Block @\(item.author.username)", systemImage: "hand.raised")
-                    }
+                Button {
+                    showModeration = true
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 14))
+                        .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(DishdColor.taupe)
                         .padding(6)
                 }
@@ -86,30 +74,12 @@ struct FeedCard: View {
         .padding(12)
         .contentShape(Rectangle())
         .onTapGesture { onOpenAuthor() }
-        .confirmationDialog(
-            "Why are you reporting this review?",
-            isPresented: $reportingReview, titleVisibility: .visible
-        ) {
-            ForEach(["Spam", "Inappropriate content", "Harassment", "Not a real review"], id: \.self) { reason in
-                Button(reason, role: .destructive) {
-                    Task {
-                        try? await SocialService.report(reviewId: item.id, reason: reason)
-                        reported = true
-                        reportThanks = true
-                    }
-                }
-            }
-        }
-        .confirmationDialog(
-            "Block @\(item.author.username)? You won't see each other's cooking.",
-            isPresented: $confirmingBlock, titleVisibility: .visible
-        ) {
-            Button("Block", role: .destructive) {
-                Task {
-                    try? await SocialService.block(item.userId)
-                    onModerated()
-                }
-            }
+        .sheet(isPresented: $showModeration) {
+            ModerationSheet(username: item.author.username,
+                            reviewId: item.id,
+                            userId: item.userId,
+                            onBlocked: onModerated,
+                            onReported: { reported = true; reportThanks = true })
         }
         .alert("Thanks — we'll take a look.", isPresented: $reportThanks) {
             Button("OK") {}

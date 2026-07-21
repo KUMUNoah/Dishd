@@ -34,12 +34,9 @@ struct ProfileView: View {
                 if isBlocked {
                     blockedState
                 } else if contentVisible {
-                    Picker("Section", selection: $section) {
-                        Text("History").tag("history")
-                        Text("Recipes").tag("recipes")
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal, 16)
+                    SegmentedChips(options: [("history", "History"), ("recipes", "Recipes")],
+                                   selection: $section)
+                        .padding(.horizontal, 16)
 
                     if section == "history" {
                         historyList
@@ -52,8 +49,8 @@ struct ProfileView: View {
             }
             .padding(.vertical, 12)
         }
-        .background(DishdColor.cream.ignoresSafeArea())
-        .toolbarBackground(DishdColor.cream, for: .navigationBar)
+        .background(DishdColor.screen.ignoresSafeArea())
+        .toolbarBackground(DishdColor.screen, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -61,55 +58,28 @@ struct ProfileView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: {
                         Image(systemName: "gearshape")
+                            .font(.system(size: 19, weight: .medium))
                             .foregroundStyle(DishdColor.espresso)
                     }
                 }
             } else {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button(role: .destructive) {
-                            reportingUser = true
-                        } label: {
-                            Label("Report user", systemImage: "flag")
-                        }
-                        if !isBlocked {
-                            Button(role: .destructive) {
-                                confirmingBlock = true
-                            } label: {
-                                Label("Block @\(profile.username)", systemImage: "hand.raised")
-                            }
-                        }
-                    } label: {
+                    Button { reportingUser = true } label: {
                         Image(systemName: "ellipsis")
+                            .font(.system(size: 19, weight: .medium))
                             .foregroundStyle(DishdColor.espresso)
                     }
                 }
             }
         }
-        .confirmationDialog(
-            "Block @\(profile.username)? You won't see each other's cooking, and they won't be able to follow you.",
-            isPresented: $confirmingBlock, titleVisibility: .visible
-        ) {
-            Button("Block", role: .destructive) {
-                Task {
-                    try? await SocialService.block(profile.id)
-                    followState = .notFollowing
-                    isBlocked = true
-                }
-            }
-        }
-        .confirmationDialog(
-            "Why are you reporting @\(profile.username)?",
-            isPresented: $reportingUser, titleVisibility: .visible
-        ) {
-            ForEach(["Spam", "Inappropriate content", "Harassment", "Fake account"], id: \.self) { reason in
-                Button(reason, role: .destructive) {
-                    Task {
-                        try? await SocialService.report(userId: profile.id, reason: reason)
-                        reportThanks = true
-                    }
-                }
-            }
+        .sheet(isPresented: $reportingUser) {
+            ModerationSheet(username: profile.username,
+                            userId: profile.id,
+                            onBlocked: {
+                                followState = .notFollowing
+                                isBlocked = true
+                            },
+                            onReported: { reportThanks = true })
         }
         .alert("Thanks — we'll take a look.", isPresented: $reportThanks) {
             Button("OK") {}
@@ -355,6 +325,81 @@ struct ProfileView: View {
     }
 }
 
+// MARK: - Settings building blocks (2d: grouped cream cards, no stock list)
+
+/// Uppercase taupe section label above a cream card.
+struct SettingsGroup<Content: View>: View {
+    let title: String
+    @ViewBuilder var content: Content
+
+    init(_ title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title.uppercased())
+                .font(.system(size: 11, weight: .semibold))
+                .kerning(0.66)
+                .foregroundStyle(DishdColor.taupe)
+                .padding(.horizontal, 4)
+            VStack(spacing: 0) { content }
+                .background(DishdColor.card)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .overlay(RoundedRectangle(cornerRadius: 18).stroke(DishdColor.border, lineWidth: 1))
+        }
+    }
+}
+
+struct SettingsRow<Accessory: View>: View {
+    let icon: String
+    let title: String
+    var subtitle: String?
+    @ViewBuilder var accessory: Accessory
+
+    init(icon: String, title: String, subtitle: String? = nil,
+         @ViewBuilder accessory: () -> Accessory) {
+        self.icon = icon
+        self.title = title
+        self.subtitle = subtitle
+        self.accessory = accessory()
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundStyle(DishdColor.terracotta)
+                .frame(width: 22)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(DishdColor.espresso)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.system(size: 11.5))
+                        .foregroundStyle(DishdColor.taupe)
+                }
+            }
+            Spacer(minLength: 8)
+            accessory
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 13)
+        .contentShape(Rectangle())
+    }
+}
+
+struct SettingsDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(DishdColor.border)
+            .frame(height: 1)
+            .padding(.horizontal, 14)
+    }
+}
+
 struct SettingsSheet: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.dismiss) private var dismiss
@@ -364,52 +409,83 @@ struct SettingsSheet: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section("Account") {
-                    Toggle(isOn: $isPrivate) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Private account")
-                            Text("Only approved followers see your cooking")
-                                .font(.system(size: 12))
-                                .foregroundStyle(DishdColor.taupe)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    SettingsGroup("Account") {
+                        SettingsRow(icon: "lock.fill", title: "Private account",
+                                    subtitle: "Only approved followers see your cooking") {
+                            Toggle("", isOn: $isPrivate)
+                                .labelsHidden()
+                                .tint(DishdColor.terracotta)
+                                .onChange(of: isPrivate) {
+                                    Task {
+                                        try? await SocialService.setPrivate(isPrivate)
+                                        await appState.loadProfile()
+                                    }
+                                }
+                        }
+                        SettingsDivider()
+                        NavigationLink { GoalsEditorView() } label: {
+                            SettingsRow(icon: "flag.fill", title: "Cooking goals") { chevron }
                         }
                     }
-                    .tint(DishdColor.terracotta)
-                    .onChange(of: isPrivate) {
-                        Task {
-                            try? await SocialService.setPrivate(isPrivate)
-                            await appState.loadProfile()
-                        }
-                    }
-                    NavigationLink("Cooking goals") {
-                        GoalsEditorView()
-                    }
-                }
-                Section("Privacy and safety") {
-                    NavigationLink("Blocked users") {
-                        BlockedUsersView()
-                    }
-                }
-                Section("About") {
-                    Link("Terms of Service", destination: Legal.termsURL)
-                    Link("Privacy Policy", destination: Legal.privacyURL)
-                }
-                Section {
-                    Button("Log out") {
-                        Task { await appState.signOut() }
-                    }
-                    .foregroundStyle(DishdColor.terracotta)
 
-                    Button("Delete account", role: .destructive) {
-                        confirmingDelete = true
+                    SettingsGroup("Privacy and safety") {
+                        NavigationLink { BlockedUsersView() } label: {
+                            SettingsRow(icon: "hand.raised.fill", title: "Blocked users") { chevron }
+                        }
                     }
+
+                    SettingsGroup("About") {
+                        Link(destination: Legal.termsURL) {
+                            SettingsRow(icon: "doc.text.fill", title: "Terms of Service") { linkGlyph }
+                        }
+                        SettingsDivider()
+                        Link(destination: Legal.privacyURL) {
+                            SettingsRow(icon: "shield.fill", title: "Privacy Policy") { linkGlyph }
+                        }
+                    }
+
+                    VStack(spacing: 9) {
+                        Button {
+                            Task { await appState.signOut() }
+                        } label: {
+                            Text("Log out")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(DishdColor.terracotta)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(DishdColor.card)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(RoundedRectangle(cornerRadius: 14)
+                                    .stroke(DishdColor.border, lineWidth: 1))
+                        }
+                        Button {
+                            confirmingDelete = true
+                        } label: {
+                            Text("Delete account")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(DishdColor.tomato)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .overlay(RoundedRectangle(cornerRadius: 14)
+                                    .stroke(DishdColor.dangerBorder, lineWidth: 1))
+                        }
+                    }
+                    .padding(.top, 2)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
             }
+            .background(DishdColor.screen.ignoresSafeArea())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(DishdColor.screen, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
+                        .foregroundStyle(DishdColor.terracotta)
                 }
             }
             .confirmationDialog(
@@ -434,6 +510,18 @@ struct SettingsSheet: View {
             Button("OK", role: .cancel) {}
         }
         .onAppear { isPrivate = appState.profile?.isPrivate ?? false }
+    }
+
+    private var chevron: some View {
+        Image(systemName: "chevron.right")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(DishdColor.chevron)
+    }
+
+    private var linkGlyph: some View {
+        Image(systemName: "arrow.up.right.square")
+            .font(.system(size: 14))
+            .foregroundStyle(DishdColor.chevron)
     }
 }
 

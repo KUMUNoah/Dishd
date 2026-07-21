@@ -57,7 +57,7 @@ struct FollowListView: View {
             .padding(16)
             .frame(maxWidth: .infinity)
         }
-        .background(DishdColor.cream.ignoresSafeArea())
+        .background(DishdColor.screen.ignoresSafeArea())
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .task {

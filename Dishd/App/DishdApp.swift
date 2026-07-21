@@ -11,7 +11,7 @@ struct DishdApp: App {
                 case .loading:
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(DishdColor.cream)
+                        .background(DishdColor.screen)
                 case .signedOut:
                     WelcomeView()
                 case .signedIn:

@@ -77,8 +77,8 @@ struct GoalsCard: View {
                 }
                 .padding(14)
                 .background(DishdColor.card)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(DishdColor.border, lineWidth: 0.5))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .overlay(RoundedRectangle(cornerRadius: 18).stroke(DishdColor.border, lineWidth: 1))
                 .padding(.horizontal, 16)
             } else if loaded {
                 setUpPrompt
@@ -119,8 +119,8 @@ struct GoalsCard: View {
         .frame(maxWidth: .infinity)
         .padding(14)
         .background(DishdColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(DishdColor.border, lineWidth: 0.5))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(DishdColor.border, lineWidth: 1))
         .padding(.horizontal, 16)
     }
 
@@ -144,13 +144,14 @@ struct GoalsCard: View {
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(DishdColor.sand)
-                    Capsule()
+                    RoundedRectangle(cornerRadius: 5).fill(DishdColor.screen)
+                    RoundedRectangle(cornerRadius: 5)
                         .fill(done ? DishdColor.honey : DishdColor.terracotta)
                         .frame(width: geo.size.width * min(1, CGFloat(value) / CGFloat(max(target, 1))))
+                    RoundedRectangle(cornerRadius: 5).stroke(DishdColor.border, lineWidth: 1)
                 }
             }
-            .frame(height: 6)
+            .frame(height: 9)
         }
     }
 }
@@ -167,7 +168,7 @@ struct GoalsEditorView: View {
                         newRecipesPerYear: $newRecipesPerYear)
                 .padding(24)
         }
-        .background(DishdColor.cream)
+        .background(DishdColor.screen)
         .navigationTitle("Cooking goals")
         .navigationBarTitleDisplayMode(.inline)
         .task {

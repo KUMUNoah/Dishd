@@ -44,7 +44,7 @@ struct WelcomeView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
             }
-            .background(DishdColor.cream)
+            .background(DishdColor.screen)
         }
         .tint(DishdColor.terracotta)
     }

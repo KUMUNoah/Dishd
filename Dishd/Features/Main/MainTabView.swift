@@ -7,6 +7,16 @@ struct MainTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white
+        // Warm hairline instead of the stock gray separator.
+        appearance.shadowColor = UIColor(red: 0.945, green: 0.918, blue: 0.878, alpha: 1)
+
+        let muted = UIColor(red: 0.718, green: 0.627, blue: 0.549, alpha: 1)  // #B7A08C
+        for item in [appearance.stackedLayoutAppearance,
+                     appearance.inlineLayoutAppearance,
+                     appearance.compactInlineLayoutAppearance] {
+            item.normal.iconColor = muted
+            item.normal.titleTextAttributes = [.foregroundColor: muted]
+        }
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -38,7 +48,7 @@ struct MainTabView: View {
                 .foregroundStyle(DishdColor.taupe)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(DishdColor.cream)
+        .background(DishdColor.screen)
     }
 
     private var ownProfile: some View {
@@ -48,7 +58,7 @@ struct MainTabView: View {
             } else {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(DishdColor.cream)
+                    .background(DishdColor.screen)
             }
         }
         .tint(DishdColor.terracotta)

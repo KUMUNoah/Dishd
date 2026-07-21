@@ -12,13 +12,10 @@ struct CollectionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                Picker("Section", selection: $section) {
-                    Text("Want to make").tag("want_to_make")
-                    Text("Made").tag("made")
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 12)
+                SegmentedChips(options: [("want_to_make", "Want to make"), ("made", "Made")],
+                               selection: $section)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
 
                 ScrollView {
                     if isLoading {
@@ -53,8 +50,8 @@ struct CollectionView: View {
                 }
                 .refreshable { await load() }
             }
-            .background(DishdColor.cream.ignoresSafeArea())
-            .toolbarBackground(DishdColor.cream, for: .navigationBar)
+            .background(DishdColor.screen.ignoresSafeArea())
+            .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle("Your recipes")
             .navigationBarTitleDisplayMode(.inline)
@@ -63,8 +60,9 @@ struct CollectionView: View {
                     Button {
                         showSaveSheet = true
                     } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 24))
+                        // 2f: bare terracotta glyph, matching the 2c chrome.
+                        Image(systemName: "plus")
+                            .font(.system(size: 21, weight: .medium))
                             .foregroundStyle(DishdColor.terracotta)
                     }
                 }

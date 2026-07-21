@@ -36,8 +36,8 @@ struct FeedView: View {
                 }
             }
             .refreshable { await load() }
-            .background(DishdColor.cream.ignoresSafeArea())
-            .toolbarBackground(DishdColor.cream, for: .navigationBar)
+            .background(DishdColor.screen.ignoresSafeArea())
+            .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { Wordmark(size: 24) }
@@ -46,14 +46,17 @@ struct FeedView: View {
                         NotificationsView()
                             .onDisappear { unreadCount = 0 }
                     } label: {
+                        // 2c: bare glyph, heavier weight, quiet tomato dot.
                         Image(systemName: "bell")
+                            .font(.system(size: 20, weight: .medium))
                             .foregroundStyle(DishdColor.espresso)
                             .overlay(alignment: .topTrailing) {
                                 if unreadCount > 0 {
                                     Circle()
                                         .fill(DishdColor.tomato)
+                                        .stroke(DishdColor.screen, lineWidth: 1.5)
                                         .frame(width: 9, height: 9)
-                                        .offset(x: 2, y: -2)
+                                        .offset(x: 2, y: -1)
                                 }
                             }
                     }
