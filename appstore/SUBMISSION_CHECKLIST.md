@@ -4,44 +4,21 @@ Status as of 22 July 2026. Ordered so the blocking work comes first.
 
 ---
 
-## 🔴 Do these before anything else
+## ✅ Backend security — done and verified 22 July
 
-### 1. Run the security migration
+All three verified by probing the live API with only the publishable key —
+the same access an attacker gets from unpacking the app binary.
 
-**Why it's urgent:** the publishable key ships inside the app binary and can
-be extracted in minutes. Until this runs, anyone can read every profile,
-every public user's reviews (photo + notes), and every save — verified
-against the live database, not inferred.
-
-Supabase → SQL Editor → paste and run all of
-[`supabase/migrations/001_require_auth.sql`](../supabase/migrations/001_require_auth.sql).
-
-**It also makes the privacy policy true.** The live policy says *"you must
-be signed in to read anything."* That's a description of the post-migration
-state. A published privacy policy that overstates your security is worse
-than having no policy — fix the gap by running the migration, not by
-editing the doc.
-
-After running it, the app must still work: sign up (username availability
-uses a new RPC), browse the feed, post a review.
-
-### 2. Turn on email confirmation
-
-Supabase → Authentication → Sign In / Providers → Email → enable
-"Confirm email".
-
-Currently off: signup returns a session instantly. That means anyone can
-register with someone else's address, and an ejected user re-registers in
-seconds — which undercuts the moderation Apple requires.
-
-### 3. Raise the password minimum to 8
-
-Supabase → Authentication → Policies → minimum password length → 8.
-
-The app enforces 8 in the UI; the server accepts 6, so the check is
-bypassable by anyone calling the API directly.
-
----
+- [x] **Migration 001 run.** Every table returns zero rows anonymously:
+      profiles, reviews, saves, recipes, starter_recipes, goals,
+      notifications, reports, analytics, blocks, follows, likes. The
+      `username_available` RPC still answers anonymously, so signup works.
+      This is also what makes the published privacy policy's security
+      section true.
+- [x] **Email confirmation on.** Signup returns no session and
+      `confirmed_at: null`.
+- [x] **Password minimum 8.** 5, 6 and 7 characters rejected as
+      `weak_password`; 8 accepted.
 
 ## 🟡 Needs Apple Developer enrollment to clear
 
