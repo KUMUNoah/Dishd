@@ -13,6 +13,17 @@ struct CollectionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                PageHeader(title: "Recipes") {
+                    Button {
+                        showSaveSheet = true
+                    } label: {
+                        // 2f: bare terracotta glyph, matching the 2c chrome.
+                        Icon(Lucide.plus, size: 36)
+                            .foregroundStyle(DishdColor.terracotta)
+                    }
+                    .zoomSource("create", in: zoomNS)
+                }
+
                 SegmentedChips(options: [("want_to_make", "Want to make"), ("made", "Made")],
                                selection: $section)
                     .padding(.horizontal, 16)
@@ -52,23 +63,7 @@ struct CollectionView: View {
                 .refreshable { await load() }
             }
             .background(DishdColor.screen.ignoresSafeArea())
-            .toolbarBackground(DishdColor.screen, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .navigationTitle("Your recipes")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showSaveSheet = true
-                    } label: {
-                        // 2f: bare terracotta glyph, matching the 2c chrome.
-                        Icon(Lucide.plus, size: 36)
-                            .foregroundStyle(DishdColor.terracotta)
-                    }
-                    .zoomSource("create", in: zoomNS)
-                }
-                .plainToolbarItem()
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(isPresented: $showSaveSheet) {
                 SaveSheet(onSaved: { Task { await load() } },
                           onQuickPost: { recipe in quickPostRecipe = recipe })
