@@ -114,7 +114,7 @@ struct FeedView: View {
             try? await Task.sleep(for: .seconds(2))
             withAnimation { toast = nil }
         } catch {
-            print("Feed save failed: \(error)")
+            Log.error("Feed save failed", error)
         }
     }
 
@@ -122,7 +122,7 @@ struct FeedView: View {
         do {
             items = try await FeedService.feed()
         } catch {
-            print("Feed load failed: \(error)")
+            Log.error("Feed load failed", error)
         }
         unreadCount = await SocialService.unreadNotificationCount()
         isLoading = false

@@ -331,7 +331,7 @@ struct ProfileView: View {
                 saves = try await SocialService.saves(of: profile.id)
             }
         } catch {
-            print("Profile content load failed: \(error)")
+            Log.error("Profile content load failed", error)
         }
     }
 }

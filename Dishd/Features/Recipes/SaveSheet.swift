@@ -269,7 +269,7 @@ struct SaveSheet: View {
                 onQuickPost?(recipe)
             }
         } catch {
-            print("SAVE FAILED: \(error)")
+            Log.error("Recipe save failed", error)
             errorMessage = "Couldn't save: \(error.localizedDescription)"
         }
     }

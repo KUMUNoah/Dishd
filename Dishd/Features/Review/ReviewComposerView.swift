@@ -128,7 +128,7 @@ struct ReviewComposerView: View {
             dismiss()
             onPosted()
         } catch {
-            print("REVIEW FAILED: \(error)")
+            Log.error("Review post failed", error)
             errorMessage = "Couldn't post: \(error.localizedDescription)"
         }
     }

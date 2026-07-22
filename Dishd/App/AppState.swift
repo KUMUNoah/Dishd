@@ -48,7 +48,7 @@ final class AppState: ObservableObject {
                 try await createMissingProfile(for: user)
             }
         } catch {
-            print("Failed to load profile: \(error)")
+            Log.error("Profile load failed", error)
         }
     }
 

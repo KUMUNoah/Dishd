@@ -160,7 +160,7 @@ struct RecipeDetailView: View {
         do {
             reviews = try await ReviewService.reviews(for: recipe.id)
         } catch {
-            print("Reviews load failed: \(error)")
+            Log.error("Recipe reviews load failed", error)
         }
     }
 }

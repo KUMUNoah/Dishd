@@ -103,7 +103,7 @@ struct CollectionView: View {
         do {
             saves = try await RecipeService.mySaves(status: section)
         } catch {
-            print("Load failed: \(error)")
+            Log.error("Collection load failed", error)
         }
         isLoading = false
     }
