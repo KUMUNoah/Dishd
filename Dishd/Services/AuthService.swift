@@ -19,17 +19,17 @@ enum AuthService {
         try await supabase.auth.signIn(email: email, password: password)
     }
 
+    /// Goes through an RPC, not the profiles table: this runs before sign-in,
+    /// and profiles is no longer readable while unauthenticated.
     static func isUsernameAvailable(_ username: String) async -> Bool {
+        struct Args: Encodable { let candidate: String }
         do {
-            let matches: [Profile] = try await supabase
-                .from("profiles")
-                .select()
-                .eq("username", value: username.lowercased())
+            return try await supabase
+                .rpc("username_available", params: Args(candidate: username.lowercased()))
                 .execute()
                 .value
-            return matches.isEmpty
         } catch {
-            return true // fail open; DB unique constraint is the backstop
+            return true // fail open; the DB unique constraint is the backstop
         }
     }
 }

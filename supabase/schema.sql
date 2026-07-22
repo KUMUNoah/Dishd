@@ -79,7 +79,7 @@ create table public.blocks (
 
 create table public.reports (
   id               uuid primary key default gen_random_uuid(),
-  reporter_id      uuid not null references public.profiles on delete cascade,
+  reporter_id      uuid references public.profiles on delete set null,  -- report outlives the reporter
   review_id        uuid references public.reviews on delete cascade,
   reported_user_id uuid references public.profiles on delete cascade,
   reason           text,
@@ -129,7 +129,8 @@ create or replace function public.can_view(viewer uuid, owner uuid)
 returns boolean
 language sql stable security definer set search_path = public as $$
   select
-    not exists (
+    viewer is not null
+    and not exists (
       select 1 from blocks
       where (blocker_id = viewer and blocked_id = owner)
          or (blocker_id = owner  and blocked_id = viewer)
@@ -160,7 +161,8 @@ alter table public.analytics_events enable row level security;
 
 -- profiles: readable unless blocked (header always visible, content gated separately)
 create policy profiles_select on public.profiles for select using (
-  not exists (select 1 from blocks
+  auth.uid() is not null
+  and not exists (select 1 from blocks
               where (blocker_id = auth.uid() and blocked_id = id)
                  or (blocker_id = id and blocked_id = auth.uid()))
 );
@@ -168,8 +170,11 @@ create policy profiles_insert on public.profiles for insert with check (id = aut
 create policy profiles_update on public.profiles for update using (id = auth.uid());
 
 -- recipes: canonical, readable by all, immutable after creation
-create policy recipes_select on public.recipes for select using (true);
-create policy recipes_insert on public.recipes for insert with check (auth.uid() is not null);
+create policy recipes_select on public.recipes for select using (auth.uid() is not null);
+create policy recipes_insert on public.recipes for insert with check (
+  auth.uid() is not null
+  and (created_by = auth.uid() or created_by is null)
+);
 -- no update/delete policies: canonical recipes are read-only by design
 
 -- folders: owner only
@@ -215,11 +220,20 @@ create policy notifs_select on public.notifications for select using (user_id = 
 create policy notifs_update on public.notifications for update using (user_id = auth.uid());
 
 -- starter recipes: readable by all
-create policy starter_select on public.starter_recipes for select using (true);
+create policy starter_select on public.starter_recipes for select using (auth.uid() is not null);
 
 -- analytics: insert own events only
 create policy analytics_insert on public.analytics_events for insert
-  with check (user_id = auth.uid() or user_id is null);
+  with check (user_id = auth.uid());
+
+-- Username availability runs BEFORE sign-in, so it can't read profiles.
+create or replace function public.username_available(candidate text)
+returns boolean
+language sql stable security definer set search_path = public as $$
+  select not exists (select 1 from profiles where username = lower(candidate))
+$$;
+revoke execute on function public.username_available(text) from public;
+grant execute on function public.username_available(text) to anon, authenticated;
 
 -- ---------- TRIGGERS ----------
 
@@ -312,9 +326,11 @@ grant execute on function public.delete_user() to authenticated;
 
 -- ---------- STORAGE ----------
 
-insert into storage.buckets (id, name, public) values
-  ('avatars', 'avatars', true),
-  ('review-photos', 'review-photos', true);
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types) values
+  ('avatars', 'avatars', true, 8388608,
+   array['image/jpeg','image/png','image/heic','image/webp']),
+  ('review-photos', 'review-photos', true, 8388608,
+   array['image/jpeg','image/png','image/heic','image/webp']);
 
 create policy storage_read on storage.objects for select using (
   bucket_id in ('avatars','review-photos')
