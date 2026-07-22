@@ -26,6 +26,21 @@ struct ProfileView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                if isOwn {
+                    // 2h: the gear lives in the page, not a nav bar — no white
+                    // strip for content to get cut off under.
+                    HStack {
+                        Spacer()
+                        Button { showSettings = true } label: {
+                            Icon(Lucide.settings, size: 34)
+                                .foregroundStyle(DishdColor.espresso)
+                        }
+                        .zoomSource("settings", in: zoomNS)
+                    }
+                    .padding(.horizontal, 28)
+                    .padding(.top, 8)
+                }
+
                 header
 
                 if isOwn {
@@ -54,17 +69,9 @@ struct ProfileView: View {
         .toolbarBackground(DishdColor.screen, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isOwn ? .hidden : .automatic, for: .navigationBar)
         .toolbar {
-            if isOwn {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { showSettings = true } label: {
-                        Icon(Lucide.settings, size: 34)
-                            .foregroundStyle(DishdColor.espresso)
-                    }
-                    .zoomSource("settings", in: zoomNS)
-                }
-                .plainToolbarItem()
-            } else {
+            if !isOwn {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { reportingUser = true } label: {
                         Icon(Lucide.ellipsis, size: 34)
