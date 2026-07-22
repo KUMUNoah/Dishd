@@ -227,7 +227,7 @@ struct SaveSheet: View {
     /// Debounced so it doesn't fire on every keystroke while pasting.
     private func detectLink() async {
         let current = link
-        guard !current.isEmpty, URL(string: current)?.host != nil else {
+        guard !current.isEmpty, SafeURL.normalized(current) != nil else {
             detected = nil; detectedPlatform = nil
             return
         }
@@ -250,13 +250,19 @@ struct SaveSheet: View {
         defer { isWorking = false }
         do {
             if isSaveForLater {
-                try await RecipeService.save(title: title, sourceUrl: link)
+                guard let safe = SafeURL.normalized(link) else {
+                    errorMessage = "That doesn't look like a web link. Paste a TikTok, Instagram, or YouTube URL."
+                    return
+                }
+                try await RecipeService.save(title: title, sourceUrl: safe)
                 onSaved()
                 dismiss()
             } else {
+                // Link is optional here; a bad one is dropped rather than
+                // blocking a post about food they actually cooked.
                 let recipe = try await RecipeService.save(
                     title: title,
-                    sourceUrl: link.isEmpty ? nil : link,
+                    sourceUrl: link.isEmpty ? nil : SafeURL.normalized(link),
                     status: "made"
                 )
                 dismiss()

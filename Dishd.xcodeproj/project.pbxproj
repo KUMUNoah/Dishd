@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		005CDBFFCDDFBE0D739A8538 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919B8AC2B1CD9D52F87F7B2A /* NotificationsView.swift */; };
 		01601A3362B28325BE8F5630 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 3A36766D9E7F01C8BCA2EDF0 /* Supabase */; };
+		0E2D69A577F78E832B98DD87 /* SafeURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9700012DB48A133DED87EE /* SafeURL.swift */; };
 		14ADA74F58B5194259E53507 /* RecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7CB8C8E2A54B65A938E11F /* RecipeService.swift */; };
 		1A3026ED8869A4959BD0F0EF /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFD7F35D56C7685CAC0E9F1 /* SearchView.swift */; };
 		1C2A081831D46B7FC61166BC /* RecipeTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D57E1ECF1641B238F4111 /* RecipeTile.swift */; };
@@ -88,6 +89,7 @@
 		9CB3F4AFF9FACFE0E784F3CF /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		9FAE2A52A4128E0E8E8558F3 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		9FC6EFC4708E66BA78FAA95D /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		AB9700012DB48A133DED87EE /* SafeURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeURL.swift; sourceTree = "<group>"; };
 		C45FB4607394A91FC6909773 /* SaveSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveSheet.swift; sourceTree = "<group>"; };
 		CC7AFC5B262873A64066B859 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		CE1D18C151ED819066E3AC65 /* ModerationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationSheet.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				006EA2944BBEADC4E94ECE90 /* GoalsService.swift */,
 				6F7CB8C8E2A54B65A938E11F /* RecipeService.swift */,
 				5236A67332A85767EA7C59C6 /* ReviewService.swift */,
+				AB9700012DB48A133DED87EE /* SafeURL.swift */,
 				91F1F006C8E5A2797A842BF9 /* SocialService.swift */,
 				50039A71CA426C7E89812CD6 /* SupabaseClient.swift */,
 			);
@@ -407,6 +410,7 @@
 				1C2A081831D46B7FC61166BC /* RecipeTile.swift in Sources */,
 				96DB5B6BD3017247337996FD /* ReviewComposerView.swift in Sources */,
 				9ACABCC8376B7A54A7ED73C4 /* ReviewService.swift in Sources */,
+				0E2D69A577F78E832B98DD87 /* SafeURL.swift in Sources */,
 				4A4681738A1A18983C59BE00 /* SaveSheet.swift in Sources */,
 				1A3026ED8869A4959BD0F0EF /* SearchView.swift in Sources */,
 				CCDFC552F52118907BC6B378 /* SegmentedChips.swift in Sources */,

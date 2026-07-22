@@ -7,8 +7,8 @@
 create table public.profiles (
   id          uuid primary key references auth.users on delete cascade,
   username    text unique not null check (username ~ '^[a-z0-9_]{3,20}$'),
-  full_name   text,
-  bio         text,
+  full_name   text check (full_name is null or length(full_name) <= 80),
+  bio         text check (bio is null or length(bio) <= 300),
   avatar_url  text,
   is_private  boolean not null default false,
   created_at  timestamptz not null default now()
@@ -16,8 +16,10 @@ create table public.profiles (
 
 create table public.recipes (
   id            uuid primary key default gen_random_uuid(),
-  title         text not null,
-  source_url    text unique,                -- nullable: quick-post recipes have no link
+  title         text not null check (length(title) between 1 and 200),
+  -- http(s) only: this is UGC, it's canonical + immutable, and other users tap it
+  source_url    text unique check (source_url is null or
+                  (source_url ~* '^https?://' and length(source_url) <= 2048)),
   thumbnail_url text,
   platform      text check (platform in ('tiktok','instagram','youtube','web')),
   created_by    uuid references public.profiles on delete set null,
@@ -47,7 +49,7 @@ create table public.reviews (
   user_id    uuid not null references public.profiles on delete cascade,
   recipe_id  uuid not null references public.recipes on delete cascade,
   rating     int  not null check (rating between 1 and 5),
-  notes      text,
+  notes      text check (notes is null or length(notes) <= 2000),
   photo_url  text not null,                 -- photo required, no exceptions
   created_at timestamptz not null default now(),
   unique (user_id, recipe_id)
@@ -82,7 +84,7 @@ create table public.reports (
   reporter_id      uuid references public.profiles on delete set null,  -- report outlives the reporter
   review_id        uuid references public.reviews on delete cascade,
   reported_user_id uuid references public.profiles on delete cascade,
-  reason           text,
+  reason           text check (reason is null or length(reason) <= 500),
   created_at       timestamptz not null default now(),
   check (review_id is not null or reported_user_id is not null)
 );

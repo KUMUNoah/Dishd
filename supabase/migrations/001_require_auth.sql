@@ -90,3 +90,41 @@ alter table public.reports alter column reporter_id drop not null;
 alter table public.reports drop constraint if exists reports_reporter_id_fkey;
 alter table public.reports add constraint reports_reporter_id_fkey
   foreign key (reporter_id) references public.profiles(id) on delete set null;
+
+-- 9) User-supplied URLs and text were completely unbounded.
+--    source_url is UGC that becomes CANONICAL and IMMUTABLE, then gets
+--    tapped by other users — URL(string:) accepts any scheme, so a crafted
+--    "recipe" could send tappers to tel:, sms:, or another app. There is
+--    already a bogus "url.come" row from testing, so clean before adding
+--    the constraint.
+update public.recipes
+   set source_url = null
+ where source_url is not null
+   and source_url !~* '^https?://';
+
+alter table public.recipes drop constraint if exists recipes_source_url_http;
+alter table public.recipes add constraint recipes_source_url_http
+  check (source_url is null or
+         (source_url ~* '^https?://' and length(source_url) <= 2048));
+
+alter table public.recipes drop constraint if exists recipes_title_len;
+alter table public.recipes add constraint recipes_title_len
+  check (length(title) between 1 and 200);
+
+-- Unbounded notes mean one user can push megabytes of text to every
+-- follower's feed.
+alter table public.reviews drop constraint if exists reviews_notes_len;
+alter table public.reviews add constraint reviews_notes_len
+  check (notes is null or length(notes) <= 2000);
+
+alter table public.profiles drop constraint if exists profiles_bio_len;
+alter table public.profiles add constraint profiles_bio_len
+  check (bio is null or length(bio) <= 300);
+
+alter table public.profiles drop constraint if exists profiles_full_name_len;
+alter table public.profiles add constraint profiles_full_name_len
+  check (full_name is null or length(full_name) <= 80);
+
+alter table public.reports drop constraint if exists reports_reason_len;
+alter table public.reports add constraint reports_reason_len
+  check (reason is null or length(reason) <= 500);

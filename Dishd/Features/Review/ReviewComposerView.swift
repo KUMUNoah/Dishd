@@ -65,6 +65,9 @@ struct ReviewComposerView: View {
                     TextField("How did it go? Be honest — what would you change?",
                               text: $notes, axis: .vertical)
                         .lineLimit(4...8)
+                        .onChange(of: notes) {
+                            if notes.count > 2000 { notes = String(notes.prefix(2000)) }
+                        }
                         .padding(14)
                         .background(DishdColor.card)
                         .clipShape(RoundedRectangle(cornerRadius: 12))

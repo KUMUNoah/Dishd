@@ -35,7 +35,7 @@ struct RecipeDetailView: View {
                     }
                 }
 
-                if let urlString = recipe.sourceUrl, let url = URL(string: urlString) {
+                if let url = SafeURL.openable(recipe.sourceUrl) {
                     Link(destination: url) {
                         Label("Watch original", systemImage: "play.fill")
                             .font(.system(size: 14, weight: .semibold))
