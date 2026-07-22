@@ -24,6 +24,9 @@ targets:
         NSPhotoLibraryUsageDescription: "dishd needs photo access so you can show how your cooking turned out."
         NSCameraUsageDescription: "dishd uses the camera to photograph what you made."
         UIAppFonts: [YoungSerif-Regular.ttf]
+        # Only HTTPS/system crypto — exempt, so App Store Connect
+        # stops asking export-compliance questions on every upload.
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         TARGETED_DEVICE_FAMILY: "1"
