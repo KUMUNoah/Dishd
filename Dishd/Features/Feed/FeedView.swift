@@ -48,8 +48,7 @@ struct FeedView: View {
                             .onDisappear { unreadCount = 0 }
                     } label: {
                         // 2c: bare glyph, heavier weight, quiet tomato dot.
-                        Image(systemName: "bell")
-                            .font(.system(size: 20, weight: .medium))
+                        Icon(Lucide.bell, size: 20)
                             .foregroundStyle(DishdColor.espresso)
                             .overlay(alignment: .topTrailing) {
                                 if unreadCount > 0 {
@@ -90,8 +89,7 @@ struct FeedView: View {
 
     private var emptyState: some View {
         VStack(spacing: 10) {
-            Image(systemName: "fork.knife")
-                .font(.system(size: 32))
+            Icon(Lucide.utensils, size: 32)
                 .foregroundStyle(DishdColor.taupe)
             Text("Nothing cooking yet")
                 .font(.system(size: 17, weight: .semibold))

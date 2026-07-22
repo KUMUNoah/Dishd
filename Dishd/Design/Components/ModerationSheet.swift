@@ -57,14 +57,14 @@ struct ModerationSheet: View {
             title("@\(username)", subtitle: "What would you like to do?")
 
             VStack(spacing: 10) {
-                actionRow(icon: "flag",
+                actionRow(icon: Lucide.flag,
                           title: "Report \(reviewId == nil ? "user" : "review")",
                           subtitle: "Tell us what's wrong — stays anonymous",
                           tint: DishdColor.terracotta,
                           fill: DishdColor.card,
                           stroke: DishdColor.border) { stage = .reasons }
 
-                actionRow(icon: "hand.raised",
+                actionRow(icon: Lucide.ban,
                           title: "Block @\(username)",
                           subtitle: "You won't see each other's cooking",
                           tint: DishdColor.tomato,
@@ -93,8 +93,7 @@ struct ModerationSheet: View {
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(DishdColor.espresso)
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .semibold))
+                            Icon(Lucide.chevronRight, size: 13)
                                 .foregroundStyle(DishdColor.chevron)
                         }
                         .padding(.horizontal, 14)
@@ -165,8 +164,7 @@ struct ModerationSheet: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10).fill(DishdColor.screen)
                     RoundedRectangle(cornerRadius: 10).stroke(stroke, lineWidth: 1)
-                    Image(systemName: icon)
-                        .font(.system(size: 17))
+                    Icon(icon, size: 17)
                         .foregroundStyle(tint)
                 }
                 .frame(width: 34, height: 34)

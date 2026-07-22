@@ -46,7 +46,7 @@ struct RecipeTile: View {
     private var placeholderView: some View {
         ZStack {
             DishdColor.sand
-            Image(systemName: "photo")
+            Icon(Lucide.image)
                 .foregroundStyle(DishdColor.taupe)
         }
     }

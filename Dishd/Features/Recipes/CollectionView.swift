@@ -61,8 +61,7 @@ struct CollectionView: View {
                         showSaveSheet = true
                     } label: {
                         // 2f: bare terracotta glyph, matching the 2c chrome.
-                        Image(systemName: "plus")
-                            .font(.system(size: 21, weight: .medium))
+                        Icon(Lucide.plus, size: 21)
                             .foregroundStyle(DishdColor.terracotta)
                     }
                 }
@@ -86,8 +85,7 @@ struct CollectionView: View {
 
     private var emptyState: some View {
         VStack(spacing: 8) {
-            Image(systemName: section == "want_to_make" ? "bookmark" : "frying.pan")
-                .font(.system(size: 30))
+            Icon(section == "want_to_make" ? Lucide.bookmark : Lucide.cookingPot, size: 30)
                 .foregroundStyle(DishdColor.taupe)
             Text(section == "want_to_make" ? "Nothing saved yet" : "Nothing made yet")
                 .font(.system(size: 16, weight: .semibold))

@@ -106,8 +106,7 @@ struct RecipeDetailView: View {
             } else {
                 ZStack {
                     DishdColor.sand
-                    Image(systemName: "photo")
-                        .font(.system(size: 30))
+                    Icon(Lucide.image, size: 30)
                         .foregroundStyle(DishdColor.taupe)
                 }
             }

@@ -38,8 +38,7 @@ struct SearchView: View {
                                         .foregroundStyle(DishdColor.taupe)
                                 }
                                 Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 12))
+                                Icon(Lucide.chevronRight, size: 12)
                                     .foregroundStyle(DishdColor.taupe)
                             }
                             .padding(12)

@@ -64,8 +64,7 @@ struct FeedCard: View {
                 Button {
                     showModeration = true
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 15, weight: .medium))
+                    Icon(Lucide.ellipsis, size: 15)
                         .foregroundStyle(DishdColor.taupe)
                         .padding(6)
                 }
@@ -96,8 +95,7 @@ struct FeedCard: View {
             } else if item.recipe.sourceUrl != nil {
                 // Link exists but no thumbnail: designed placeholder.
                 VStack(spacing: 6) {
-                    Image(systemName: "play.circle")
-                        .font(.system(size: 30))
+                    Icon(Lucide.playCircle, size: 30)
                         .foregroundStyle(DishdColor.taupe)
                     Text("View original")
                         .font(.system(size: 13, weight: .semibold))
@@ -137,8 +135,7 @@ struct FeedCard: View {
                 HStack(spacing: 4) {
                     Text(item.recipe.title)
                         .font(.system(size: 14, weight: .semibold))
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 11, weight: .semibold))
+                    Icon(Lucide.chevronRight, size: 11)
                 }
                 .foregroundStyle(DishdColor.terracotta)
             }
@@ -160,8 +157,7 @@ struct FeedCard: View {
                     Task { await toggleLike() }
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: liked ? "heart.fill" : "heart")
-                            .font(.system(size: 18))
+                        Icon(liked ? Lucide.heartFill : Lucide.heart, size: 18)
                         if likeCount > 0 {
                             Text("\(likeCount)").font(.system(size: 13))
                         }

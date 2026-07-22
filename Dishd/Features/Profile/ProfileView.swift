@@ -57,8 +57,7 @@ struct ProfileView: View {
             if isOwn {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: {
-                        Image(systemName: "gearshape")
-                            .font(.system(size: 19, weight: .medium))
+                        Icon(Lucide.settings, size: 19)
                             .foregroundStyle(DishdColor.espresso)
                     }
                 }
@@ -66,8 +65,7 @@ struct ProfileView: View {
             } else {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { reportingUser = true } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 19, weight: .medium))
+                        Icon(Lucide.ellipsis, size: 19)
                             .foregroundStyle(DishdColor.espresso)
                     }
                 }
@@ -110,7 +108,7 @@ struct ProfileView: View {
                 HStack(spacing: 4) {
                     Text("@\(profile.username)")
                     if profile.isPrivate {
-                        Image(systemName: "lock.fill").font(.system(size: 10))
+                        Icon(Lucide.lock, size: 11)
                     }
                 }
                 .font(.system(size: 13))
@@ -200,8 +198,7 @@ struct ProfileView: View {
 
     private var blockedState: some View {
         VStack(spacing: 8) {
-            Image(systemName: "hand.raised")
-                .font(.system(size: 26))
+            Icon(Lucide.ban, size: 26)
                 .foregroundStyle(DishdColor.taupe)
             Text("You've blocked @\(profile.username)")
                 .font(.system(size: 15, weight: .semibold))
@@ -221,8 +218,7 @@ struct ProfileView: View {
 
     private var lockState: some View {
         VStack(spacing: 8) {
-            Image(systemName: "lock")
-                .font(.system(size: 26))
+            Icon(Lucide.lock, size: 26)
                 .foregroundStyle(DishdColor.taupe)
             Text("Follow to see their cooking")
                 .font(.system(size: 15, weight: .semibold))
@@ -370,8 +366,7 @@ struct SettingsRow<Accessory: View>: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
+            Icon(icon, size: 16)
                 .foregroundStyle(DishdColor.terracotta)
                 .frame(width: 22)
             VStack(alignment: .leading, spacing: 1) {
@@ -414,7 +409,7 @@ struct SettingsSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     SettingsGroup("Account") {
-                        SettingsRow(icon: "lock.fill", title: "Private account",
+                        SettingsRow(icon: Lucide.lock, title: "Private account",
                                     subtitle: "Only approved followers see your cooking") {
                             Toggle("", isOn: $isPrivate)
                                 .labelsHidden()
@@ -428,23 +423,23 @@ struct SettingsSheet: View {
                         }
                         SettingsDivider()
                         NavigationLink { GoalsEditorView() } label: {
-                            SettingsRow(icon: "flag.fill", title: "Cooking goals") { chevron }
+                            SettingsRow(icon: Lucide.flag, title: "Cooking goals") { chevron }
                         }
                     }
 
                     SettingsGroup("Privacy and safety") {
                         NavigationLink { BlockedUsersView() } label: {
-                            SettingsRow(icon: "hand.raised.fill", title: "Blocked users") { chevron }
+                            SettingsRow(icon: Lucide.ban, title: "Blocked users") { chevron }
                         }
                     }
 
                     SettingsGroup("About") {
                         Link(destination: Legal.termsURL) {
-                            SettingsRow(icon: "doc.text.fill", title: "Terms of Service") { linkGlyph }
+                            SettingsRow(icon: Lucide.fileText, title: "Terms of Service") { linkGlyph }
                         }
                         SettingsDivider()
                         Link(destination: Legal.privacyURL) {
-                            SettingsRow(icon: "shield.fill", title: "Privacy Policy") { linkGlyph }
+                            SettingsRow(icon: Lucide.shield, title: "Privacy Policy") { linkGlyph }
                         }
                     }
 
@@ -516,14 +511,12 @@ struct SettingsSheet: View {
     }
 
     private var chevron: some View {
-        Image(systemName: "chevron.right")
-            .font(.system(size: 13, weight: .semibold))
+        Icon(Lucide.chevronRight, size: 13)
             .foregroundStyle(DishdColor.chevron)
     }
 
     private var linkGlyph: some View {
-        Image(systemName: "arrow.up.right.square")
-            .font(.system(size: 14))
+        Icon(Lucide.externalLink, size: 14)
             .foregroundStyle(DishdColor.chevron)
     }
 }
