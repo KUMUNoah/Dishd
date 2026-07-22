@@ -24,10 +24,11 @@ struct ProfileView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 if isOwn {
                     // 2h: the gear lives in the page, not a nav bar — no white
-                    // strip for content to get cut off under.
+                    // strip for content to get cut off under. Its own tight
+                    // padding keeps the avatar near the top, per the mockup.
                     HStack {
                         Spacer()
                         NavigationLink { SettingsView() } label: {
@@ -36,32 +37,36 @@ struct ProfileView: View {
                         }
                     }
                     .padding(.horizontal, 28)
-                    .padding(.top, 8)
+                    .padding(.top, 10)
+                    .padding(.bottom, 4)
                 }
 
-                header
+                VStack(spacing: 16) {
+                    header
 
-                if isOwn {
-                    GoalsCard()
-                }
-
-                if isBlocked {
-                    blockedState
-                } else if contentVisible {
-                    SegmentedChips(options: [("history", "History"), ("recipes", "Recipes")],
-                                   selection: $section)
-                        .padding(.horizontal, 16)
-
-                    if section == "history" {
-                        historyList
-                    } else {
-                        recipeGrid
+                    if isOwn {
+                        GoalsCard()
                     }
-                } else {
-                    lockState
+
+                    if isBlocked {
+                        blockedState
+                    } else if contentVisible {
+                        SegmentedChips(options: [("history", "History"), ("recipes", "Recipes")],
+                                       selection: $section)
+                            .padding(.horizontal, 16)
+
+                        if section == "history" {
+                            historyList
+                        } else {
+                            recipeGrid
+                        }
+                    } else {
+                        lockState
+                    }
                 }
+                .padding(.top, isOwn ? 0 : 12)
+                .padding(.bottom, 12)
             }
-            .padding(.vertical, 12)
         }
         .background(DishdColor.screen.ignoresSafeArea())
         .toolbarBackground(DishdColor.screen, for: .navigationBar)
