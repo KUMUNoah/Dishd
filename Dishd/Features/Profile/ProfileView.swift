@@ -17,6 +17,7 @@ struct ProfileView: View {
     @State private var confirmingBlock = false
     @State private var reportingUser = false
     @State private var reportThanks = false
+    @Namespace private var zoomNS
 
     private var contentVisible: Bool {
         !isBlocked && (isOwn || !profile.isPrivate || followState == .following)
@@ -57,17 +58,19 @@ struct ProfileView: View {
             if isOwn {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: {
-                        Icon(Lucide.settings, size: 19)
+                        Icon(Lucide.settings, size: 34)
                             .foregroundStyle(DishdColor.espresso)
                     }
+                    .zoomSource("settings", in: zoomNS)
                 }
                 .plainToolbarItem()
             } else {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { reportingUser = true } label: {
-                        Icon(Lucide.ellipsis, size: 19)
+                        Icon(Lucide.ellipsis, size: 34)
                             .foregroundStyle(DishdColor.espresso)
                     }
+                    .zoomSource("report", in: zoomNS)
                 }
                 .plainToolbarItem()
             }
@@ -80,11 +83,15 @@ struct ProfileView: View {
                                 isBlocked = true
                             },
                             onReported: { reportThanks = true })
+                .zoomsFrom("report", in: zoomNS)
         }
         .alert("Thanks — we'll take a look.", isPresented: $reportThanks) {
             Button("OK") {}
         }
-        .sheet(isPresented: $showSettings) { SettingsSheet() }
+        .sheet(isPresented: $showSettings) {
+            SettingsSheet()
+                .zoomsFrom("settings", in: zoomNS)
+        }
         .task { await load() }
         .onChange(of: section) { Task { await loadContent() } }
     }
@@ -94,15 +101,15 @@ struct ProfileView: View {
             ZStack {
                 Circle().fill(DishdColor.honey)
                 Text(String(profile.username.prefix(1)).uppercased())
-                    .font(.system(size: 26, weight: .semibold))
+                    .font(.system(size: 34, weight: .semibold))
                     .foregroundStyle(DishdColor.espresso)
             }
-            .frame(width: 72, height: 72)
+            .frame(width: 94, height: 94)
 
             VStack(spacing: 2) {
                 if let name = profile.fullName {
                     Text(name)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 22, weight: .semibold))
                         .foregroundStyle(DishdColor.espresso)
                 }
                 HStack(spacing: 4) {
@@ -111,7 +118,7 @@ struct ProfileView: View {
                         Icon(Lucide.lock, size: 11)
                     }
                 }
-                .font(.system(size: 13))
+                .font(.system(size: 17))
                 .foregroundStyle(DishdColor.taupe)
             }
 
@@ -123,7 +130,7 @@ struct ProfileView: View {
                     .padding(.horizontal, 40)
             }
 
-            HStack(spacing: 28) {
+            HStack(spacing: 38) {
                 stat(stats.made, "made")
                 if contentVisible {
                     NavigationLink {
@@ -173,10 +180,10 @@ struct ProfileView: View {
     private func stat(_ value: Int, _ label: String) -> some View {
         VStack(spacing: 1) {
             Text("\(value)")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 21, weight: .semibold))
                 .foregroundStyle(DishdColor.espresso)
             Text(label)
-                .font(.system(size: 12))
+                .font(.system(size: 16))
                 .foregroundStyle(DishdColor.taupe)
         }
     }
@@ -187,10 +194,10 @@ struct ProfileView: View {
         } label: {
             Text(followState == .following ? "Following"
                  : followState == .pending ? "Requested" : "Follow")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(followState == .notFollowing ? .white : DishdColor.taupe)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 9)
+                .padding(.horizontal, 40)
+                .padding(.vertical, 11)
                 .background(followState == .notFollowing ? DishdColor.terracotta : DishdColor.sand)
                 .clipShape(Capsule())
         }
@@ -338,14 +345,14 @@ struct SettingsGroup<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title.uppercased())
-                .font(.system(size: 11, weight: .semibold))
-                .kerning(0.66)
+                .font(.system(size: 14, weight: .semibold))
+                .kerning(0.84)
                 .foregroundStyle(DishdColor.taupe)
                 .padding(.horizontal, 4)
             VStack(spacing: 0) { content }
                 .background(DishdColor.card)
-                .clipShape(RoundedRectangle(cornerRadius: 18))
-                .overlay(RoundedRectangle(cornerRadius: 18).stroke(DishdColor.border, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .overlay(RoundedRectangle(cornerRadius: 24).stroke(DishdColor.border, lineWidth: 1))
         }
     }
 }
@@ -366,24 +373,24 @@ struct SettingsRow<Accessory: View>: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Icon(icon, size: 16)
+            Icon(icon, size: 27)
                 .foregroundStyle(DishdColor.terracotta)
-                .frame(width: 22)
+                .frame(width: 30)
             VStack(alignment: .leading, spacing: 1) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(DishdColor.espresso)
                 if let subtitle {
                     Text(subtitle)
-                        .font(.system(size: 11.5))
+                        .font(.system(size: 15))
                         .foregroundStyle(DishdColor.taupe)
                 }
             }
             Spacer(minLength: 8)
             accessory
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 13)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 17)
         .contentShape(Rectangle())
     }
 }
@@ -393,7 +400,7 @@ struct SettingsDivider: View {
         Rectangle()
             .fill(DishdColor.border)
             .frame(height: 1)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 18)
     }
 }
 
@@ -407,7 +414,7 @@ struct SettingsSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 26) {
                     SettingsGroup("Account") {
                         SettingsRow(icon: Lucide.lock, title: "Private account",
                                     subtitle: "Only approved followers see your cooking") {
@@ -448,24 +455,24 @@ struct SettingsSheet: View {
                             Task { await appState.signOut() }
                         } label: {
                             Text("Log out")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 18, weight: .semibold))
                                 .foregroundStyle(DishdColor.terracotta)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
+                                .padding(.vertical, 16)
                                 .background(DishdColor.card)
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-                                .overlay(RoundedRectangle(cornerRadius: 14)
+                                .clipShape(RoundedRectangle(cornerRadius: 18))
+                                .overlay(RoundedRectangle(cornerRadius: 18)
                                     .stroke(DishdColor.border, lineWidth: 1))
                         }
                         Button {
                             confirmingDelete = true
                         } label: {
                             Text("Delete account")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 18, weight: .semibold))
                                 .foregroundStyle(DishdColor.tomato)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .overlay(RoundedRectangle(cornerRadius: 14)
+                                .padding(.vertical, 16)
+                                .overlay(RoundedRectangle(cornerRadius: 18)
                                     .stroke(DishdColor.dangerBorder, lineWidth: 1))
                         }
                     }
@@ -511,12 +518,12 @@ struct SettingsSheet: View {
     }
 
     private var chevron: some View {
-        Icon(Lucide.chevronRight, size: 13)
+        Icon(Lucide.chevronRight, size: 18)
             .foregroundStyle(DishdColor.chevron)
     }
 
     private var linkGlyph: some View {
-        Icon(Lucide.externalLink, size: 14)
+        Icon(Lucide.externalLink, size: 18)
             .foregroundStyle(DishdColor.chevron)
     }
 }

@@ -71,14 +71,14 @@ struct GoalsCard: View {
                         goalRow("This month", value: progress.newRecipesThisMonth,
                                 target: monthlyTarget, noun: "new recipes")
                         Text("\(progress.newRecipesThisYear) of \(goals.newRecipesPerYear) for the year")
-                            .font(.system(size: 11))
+                            .font(.system(size: 14))
                             .foregroundStyle(DishdColor.taupe)
                     }
                 }
-                .padding(14)
+                .padding(18)
                 .background(DishdColor.card)
-                .clipShape(RoundedRectangle(cornerRadius: 18))
-                .overlay(RoundedRectangle(cornerRadius: 18).stroke(DishdColor.border, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .overlay(RoundedRectangle(cornerRadius: 24).stroke(DishdColor.border, lineWidth: 1))
                 .padding(.horizontal, 16)
             } else if loaded {
                 setUpPrompt
@@ -97,17 +97,17 @@ struct GoalsCard: View {
     private var setUpPrompt: some View {
         VStack(spacing: 6) {
             Text("Set your cooking goals")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(DishdColor.espresso)
             Text("Pick how often you want to cook — we'll track your progress here.")
-                .font(.system(size: 12))
+                .font(.system(size: 15))
                 .foregroundStyle(DishdColor.taupe)
                 .multilineTextAlignment(.center)
             NavigationLink {
                 GoalsEditorView()
             } label: {
                 Text("Set goals")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 7)
@@ -117,10 +117,10 @@ struct GoalsCard: View {
             .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
-        .padding(14)
+        .padding(18)
         .background(DishdColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(DishdColor.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .overlay(RoundedRectangle(cornerRadius: 24).stroke(DishdColor.border, lineWidth: 1))
         .padding(.horizontal, 16)
     }
 
@@ -135,11 +135,11 @@ struct GoalsCard: View {
         return VStack(alignment: .leading, spacing: 5) {
             HStack {
                 Text(title)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(DishdColor.espresso)
                 Spacer()
                 Text(done ? "\(value) of \(target) \(noun) 🎉" : "\(value) of \(target) \(noun)")
-                    .font(.system(size: 12))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(DishdColor.taupe)
             }
             GeometryReader { geo in
@@ -151,7 +151,7 @@ struct GoalsCard: View {
                     RoundedRectangle(cornerRadius: 5).stroke(DishdColor.border, lineWidth: 1)
                 }
             }
-            .frame(height: 9)
+            .frame(height: 12)
         }
     }
 }

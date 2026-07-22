@@ -22,29 +22,29 @@ struct SearchView: View {
                                 ZStack {
                                     Circle().fill(DishdColor.honey)
                                     Text(String(profile.username.prefix(1)).uppercased())
-                                        .font(.system(size: 13, weight: .semibold))
+                                        .font(.system(size: 17, weight: .semibold))
                                         .foregroundStyle(DishdColor.espresso)
                                 }
-                                .frame(width: 38, height: 38)
+                                .frame(width: 50, height: 50)
 
                                 VStack(alignment: .leading, spacing: 1) {
                                     if let name = profile.fullName {
                                         Text(name)
-                                            .font(.system(size: 14, weight: .semibold))
+                                            .font(.system(size: 18, weight: .semibold))
                                             .foregroundStyle(DishdColor.espresso)
                                     }
                                     Text("@\(profile.username)")
-                                        .font(.system(size: 13))
+                                        .font(.system(size: 16))
                                         .foregroundStyle(DishdColor.taupe)
                                 }
                                 Spacer()
-                                Icon(Lucide.chevronRight, size: 12)
+                                Icon(Lucide.chevronRight, size: 17)
                                     .foregroundStyle(DishdColor.taupe)
                             }
-                            .padding(12)
+                            .padding(14)
                             .background(DishdColor.card)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .overlay(RoundedRectangle(cornerRadius: 16).stroke(DishdColor.border, lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: 21))
+                            .overlay(RoundedRectangle(cornerRadius: 21).stroke(DishdColor.border, lineWidth: 1))
                         }
                         .buttonStyle(.plain)
                     }

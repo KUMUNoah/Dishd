@@ -32,7 +32,7 @@ struct DishdTabBar: View {
             ForEach(DishdTab.allCases, id: \.self) { tab in
                 let selected = selection == tab
                 // Lucide is stroke-only, so colour alone marks the active tab.
-                Icon(tab.icon, size: 23)
+                Icon(tab.icon, size: 32)
                     .foregroundStyle(selected ? DishdColor.terracotta : DishdColor.iconMuted)
                     .frame(maxWidth: .infinity)
                     .contentShape(Rectangle())
@@ -41,9 +41,9 @@ struct DishdTabBar: View {
                     .accessibilityAddTraits(selected ? [.isSelected, .isButton] : .isButton)
             }
         }
-        .padding(.top, 12)
-        .padding(.bottom, 4)
-        .padding(.horizontal, 20)
+        .padding(.top, 15)
+        .padding(.bottom, 8)
+        .padding(.horizontal, 26)
         .background(alignment: .top) {
             ZStack(alignment: .top) {
                 DishdColor.screen

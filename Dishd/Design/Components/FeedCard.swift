@@ -14,6 +14,7 @@ struct FeedCard: View {
     @State private var reported = false
     @State private var showModeration = false
     @State private var reportThanks = false
+    @Namespace private var zoomNS
 
     init(item: FeedItem, currentUserId: UUID?,
          onSave: @escaping () -> Void, onOpenRecipe: @escaping () -> Void,
@@ -45,17 +46,17 @@ struct FeedCard: View {
             ZStack {
                 Circle().fill(DishdColor.honey)
                 Text(String(item.author.username.prefix(1)).uppercased())
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(DishdColor.espresso)
             }
-            .frame(width: 30, height: 30)
+            .frame(width: 39, height: 39)
 
             Text(item.author.username)
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(DishdColor.espresso)
 
             Text(item.createdAt.formatted(.relative(presentation: .named)))
-                .font(.system(size: 12))
+                .font(.system(size: 16))
                 .foregroundStyle(DishdColor.taupe)
 
             Spacer()
@@ -64,13 +65,14 @@ struct FeedCard: View {
                 Button {
                     showModeration = true
                 } label: {
-                    Icon(Lucide.ellipsis, size: 15)
+                    Icon(Lucide.ellipsis, size: 26)
                         .foregroundStyle(DishdColor.taupe)
                         .padding(6)
                 }
+                .zoomSource("more", in: zoomNS)
             }
         }
-        .padding(12)
+        .padding(16)
         .contentShape(Rectangle())
         .onTapGesture { onOpenAuthor() }
         .sheet(isPresented: $showModeration) {
@@ -79,6 +81,7 @@ struct FeedCard: View {
                             userId: item.userId,
                             onBlocked: onModerated,
                             onReported: { reported = true; reportThanks = true })
+                .zoomsFrom("more", in: zoomNS)
         }
         .alert("Thanks — we'll take a look.", isPresented: $reportThanks) {
             Button("OK") {}
@@ -107,7 +110,7 @@ struct FeedCard: View {
             // No link at all (quick post): single photo, no second slide.
         }
         .tabViewStyle(.page(indexDisplayMode: item.recipe.sourceUrl == nil ? .never : .automatic))
-        .frame(height: 260)
+        .frame(height: 230)
     }
 
     private func slideImage(_ urlString: String) -> some View {
@@ -122,11 +125,11 @@ struct FeedCard: View {
 
     private var footer: some View {
         VStack(alignment: .leading, spacing: 8) {
-            StarRatingDisplay(rating: item.rating)
+            StarRatingDisplay(rating: item.rating, size: 21)
 
             if let notes = item.notes {
                 Text(notes)
-                    .font(.system(size: 14))
+                    .font(.system(size: 17))
                     .foregroundStyle(DishdColor.espresso)
                     .lineLimit(3)
             }
@@ -134,8 +137,8 @@ struct FeedCard: View {
             Button(action: onOpenRecipe) {
                 HStack(spacing: 4) {
                     Text(item.recipe.title)
-                        .font(.system(size: 14, weight: .semibold))
-                    Icon(Lucide.chevronRight, size: 11)
+                        .font(.system(size: 17, weight: .semibold))
+                    Icon(Lucide.chevronRight, size: 17)
                 }
                 .foregroundStyle(DishdColor.terracotta)
             }
@@ -144,10 +147,10 @@ struct FeedCard: View {
                 if item.userId != currentUserId {
                     Button(action: onSave) {
                         Text("Save")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 7)
+                            .padding(.horizontal, 23)
+                            .padding(.vertical, 9)
                             .background(DishdColor.terracotta)
                             .clipShape(Capsule())
                     }
@@ -157,9 +160,9 @@ struct FeedCard: View {
                     Task { await toggleLike() }
                 } label: {
                     HStack(spacing: 4) {
-                        Icon(liked ? Lucide.heartFill : Lucide.heart, size: 18)
+                        Icon(liked ? Lucide.heartFill : Lucide.heart, size: 25)
                         if likeCount > 0 {
-                            Text("\(likeCount)").font(.system(size: 13))
+                            Text("\(likeCount)").font(.system(size: 17))
                         }
                     }
                     .foregroundStyle(DishdColor.tomato)
@@ -169,7 +172,7 @@ struct FeedCard: View {
             }
             .padding(.top, 2)
         }
-        .padding(12)
+        .padding(16)
     }
 
     private func toggleLike() async {

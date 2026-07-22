@@ -12,13 +12,13 @@ struct SegmentedChips: View {
             ForEach(options, id: \.0) { tag, label in
                 let selected = selection == tag
                 Text(label)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(selected ? .white : DishdColor.taupe)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 7)
+                    .padding(.vertical, 9)
                     .background {
                         if selected {
-                            RoundedRectangle(cornerRadius: 10)
+                            RoundedRectangle(cornerRadius: 13)
                                 .fill(DishdColor.terracotta)
                         }
                     }
@@ -28,9 +28,9 @@ struct SegmentedChips: View {
                     }
             }
         }
-        .padding(3)
+        .padding(4)
         .background(DishdColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 13))
-        .overlay(RoundedRectangle(cornerRadius: 13).stroke(DishdColor.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 17))
+        .overlay(RoundedRectangle(cornerRadius: 17).stroke(DishdColor.border, lineWidth: 1))
     }
 }

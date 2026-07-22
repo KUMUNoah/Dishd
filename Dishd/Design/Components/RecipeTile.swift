@@ -6,28 +6,28 @@ struct RecipeTile: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             thumbnail
-                .frame(height: 110)
+                .frame(height: 126)
                 .frame(maxWidth: .infinity)
                 .clipped()
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(recipe.title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(DishdColor.espresso)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 if let platform = recipe.platform {
                     Text(platformLabel(platform))
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundStyle(DishdColor.taupe)
                 }
             }
-            .padding(10)
+            .padding(13)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(DishdColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(DishdColor.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 21))
+        .overlay(RoundedRectangle(cornerRadius: 21).stroke(DishdColor.border, lineWidth: 1))
     }
 
     @ViewBuilder

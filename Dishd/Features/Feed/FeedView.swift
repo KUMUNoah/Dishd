@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FeedView: View {
     @EnvironmentObject private var appState: AppState
+    @Namespace private var zoomNS
     @State private var items: [FeedItem] = []
     @State private var isLoading = true
     @State private var toast: String?
@@ -17,7 +18,7 @@ struct FeedView: View {
                 } else if items.isEmpty {
                     emptyState
                 } else {
-                    LazyVStack(spacing: 14) {
+                    LazyVStack(spacing: 18) {
                         ForEach(items) { item in
                             FeedCard(item: item,
                                      currentUserId: appState.profile?.id,
@@ -31,7 +32,7 @@ struct FeedView: View {
                                      onModerated: { Task { await load() } })
                         }
                     }
-                    .padding(.horizontal, 14)
+                    .padding(.horizontal, 20)
                     .padding(.bottom, 20)
                 }
             }
@@ -40,26 +41,28 @@ struct FeedView: View {
             .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Wordmark(size: 24).fixedSize() }
+                ToolbarItem(placement: .topBarLeading) { Wordmark(size: 34).fixedSize() }
                     .plainToolbarItem()
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         NotificationsView()
                             .onDisappear { unreadCount = 0 }
+                            .zoomsFrom("bell", in: zoomNS)
                     } label: {
                         // 2c: bare glyph, heavier weight, quiet tomato dot.
-                        Icon(Lucide.bell, size: 20)
+                        Icon(Lucide.bell, size: 34)
                             .foregroundStyle(DishdColor.espresso)
                             .overlay(alignment: .topTrailing) {
                                 if unreadCount > 0 {
                                     Circle()
                                         .fill(DishdColor.tomato)
                                         .stroke(DishdColor.screen, lineWidth: 1.5)
-                                        .frame(width: 9, height: 9)
-                                        .offset(x: 2, y: -1)
+                                        .frame(width: 11, height: 11)
+                                        .offset(x: 1, y: 1)
                                 }
                             }
                     }
+                    .zoomSource("bell", in: zoomNS)
                 }
                 .plainToolbarItem()
             }

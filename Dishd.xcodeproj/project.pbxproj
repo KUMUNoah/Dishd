@@ -47,6 +47,7 @@
 		DFD82895A0E15C36F34AA576 /* GoalsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006EA2944BBEADC4E94ECE90 /* GoalsService.swift */; };
 		E7FF919889FBE278007036A7 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6EFC4708E66BA78FAA95D /* WelcomeView.swift */; };
 		EA05C76DC11E857A992F8F02 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FAE2A52A4128E0E8E8558F3 /* AppState.swift */; };
+		F4F683527639C76CBA0FEB19 /* ZoomTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4A4A824F89F5A6E198FD5B /* ZoomTransition.swift */; };
 		F6A82ADF5BEB23F40093CED6 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429D0E48F36CC0D2DA811AFE /* AuthService.swift */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +70,7 @@
 		5F7862F87709C83A55BE6F8D /* Lucide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lucide.swift; sourceTree = "<group>"; };
 		63D8848D646DD6CEDEAC6CC3 /* SegmentedChips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedChips.swift; sourceTree = "<group>"; };
 		64818098E84C36AF8711D4D2 /* GoalsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsViews.swift; sourceTree = "<group>"; };
+		6D4A4A824F89F5A6E198FD5B /* ZoomTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomTransition.swift; sourceTree = "<group>"; };
 		6EFC8FC09198B62B6E633B64 /* DishdTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishdTabBar.swift; sourceTree = "<group>"; };
 		6F7CB8C8E2A54B65A938E11F /* RecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeService.swift; sourceTree = "<group>"; };
 		6FFD7F35D56C7685CAC0E9F1 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				5F7862F87709C83A55BE6F8D /* Lucide.swift */,
 				72E9C872E0FAF111DEF82BDF /* ToolbarStyle.swift */,
 				9CB3F4AFF9FACFE0E784F3CF /* Typography.swift */,
+				6D4A4A824F89F5A6E198FD5B /* ZoomTransition.swift */,
 				FB458E9BBE3A0B8457485E13 /* Components */,
 			);
 			path = Design;
@@ -410,6 +413,7 @@
 				3F7FFA63271733C9FFE03406 /* ToolbarStyle.swift in Sources */,
 				9908187B0EB37278DE419C75 /* Typography.swift in Sources */,
 				E7FF919889FBE278007036A7 /* WelcomeView.swift in Sources */,
+				F4F683527639C76CBA0FEB19 /* ZoomTransition.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

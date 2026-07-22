@@ -1,13 +1,14 @@
 import SwiftUI
 
 struct CollectionView: View {
+    @Namespace private var zoomNS
     @State private var section = "want_to_make"
     @State private var saves: [SavedRecipe] = []
     @State private var isLoading = true
     @State private var showSaveSheet = false
     @State private var quickPostRecipe: Recipe?
 
-    private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+    private let columns = [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)]
 
     var body: some View {
         NavigationStack {
@@ -23,7 +24,7 @@ struct CollectionView: View {
                     } else if saves.isEmpty {
                         emptyState
                     } else {
-                        LazyVGrid(columns: columns, spacing: 12) {
+                        LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(saves) { save in
                                 NavigationLink {
                                     RecipeDetailView(recipe: save.recipe,
@@ -61,15 +62,17 @@ struct CollectionView: View {
                         showSaveSheet = true
                     } label: {
                         // 2f: bare terracotta glyph, matching the 2c chrome.
-                        Icon(Lucide.plus, size: 21)
+                        Icon(Lucide.plus, size: 36)
                             .foregroundStyle(DishdColor.terracotta)
                     }
+                    .zoomSource("create", in: zoomNS)
                 }
                 .plainToolbarItem()
             }
             .sheet(isPresented: $showSaveSheet) {
                 SaveSheet(onSaved: { Task { await load() } },
                           onQuickPost: { recipe in quickPostRecipe = recipe })
+                    .zoomsFrom("create", in: zoomNS)
             }
             .sheet(item: $quickPostRecipe) { recipe in
                 ReviewComposerView(recipe: recipe) {

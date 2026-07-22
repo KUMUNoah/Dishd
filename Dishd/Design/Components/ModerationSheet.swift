@@ -23,7 +23,7 @@ struct ModerationSheet: View {
         VStack(spacing: 0) {
             Capsule()
                 .fill(DishdColor.grabber)
-                .frame(width: 40, height: 5)
+                .frame(width: 48, height: 6)
                 .padding(.top, 8)
                 .padding(.bottom, 14)
 
@@ -46,7 +46,7 @@ struct ModerationSheet: View {
         }
         .presentationDetents([.height(contentHeight)])
         .presentationDragIndicator(.hidden)
-        .presentationCornerRadius(28)
+        .presentationCornerRadius(34)
         .animation(.snappy(duration: 0.25), value: contentHeight)
     }
 
@@ -90,10 +90,10 @@ struct ModerationSheet: View {
                     } label: {
                         HStack {
                             Text(reason)
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 18, weight: .semibold))
                                 .foregroundStyle(DishdColor.espresso)
                             Spacer()
-                            Icon(Lucide.chevronRight, size: 13)
+                            Icon(Lucide.chevronRight, size: 18)
                                 .foregroundStyle(DishdColor.chevron)
                         }
                         .padding(.horizontal, 14)
@@ -127,7 +127,7 @@ struct ModerationSheet: View {
                 }
             } label: {
                 Text("Block @\(username)")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -145,10 +145,10 @@ struct ModerationSheet: View {
     private func title(_ text: String, subtitle: String) -> some View {
         VStack(spacing: 3) {
             Text(text)
-                .font(.system(size: 16, weight: .bold))
+                .font(.system(size: 21, weight: .bold))
                 .foregroundStyle(DishdColor.espresso)
             Text(subtitle)
-                .font(.system(size: 12))
+                .font(.system(size: 16))
                 .foregroundStyle(DishdColor.taupe)
                 .multilineTextAlignment(.center)
         }
@@ -162,27 +162,27 @@ struct ModerationSheet: View {
         Button(action: action) {
             HStack(spacing: 13) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10).fill(DishdColor.screen)
-                    RoundedRectangle(cornerRadius: 10).stroke(stroke, lineWidth: 1)
-                    Icon(icon, size: 17)
+                    RoundedRectangle(cornerRadius: 13).fill(DishdColor.screen)
+                    RoundedRectangle(cornerRadius: 13).stroke(stroke, lineWidth: 1)
+                    Icon(icon, size: 26)
                         .foregroundStyle(tint)
                 }
-                .frame(width: 34, height: 34)
+                .frame(width: 44, height: 44)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(title)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(tint == DishdColor.tomato ? DishdColor.tomato : DishdColor.espresso)
                     Text(subtitle)
-                        .font(.system(size: 11.5))
+                        .font(.system(size: 15))
                         .foregroundStyle(DishdColor.taupe)
                 }
                 Spacer(minLength: 0)
             }
-            .padding(14)
+            .padding(18)
             .background(fill)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(RoundedRectangle(cornerRadius: 16).stroke(stroke, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 21))
+            .overlay(RoundedRectangle(cornerRadius: 21).stroke(stroke, lineWidth: 1))
         }
     }
 
@@ -191,7 +191,7 @@ struct ModerationSheet: View {
             if stage == .actions { dismiss() } else { stage = .actions }
         } label: {
             Text(stage == .actions ? "Cancel" : "Back")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(DishdColor.taupe)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
