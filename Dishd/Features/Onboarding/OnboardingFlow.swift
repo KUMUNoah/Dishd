@@ -299,7 +299,7 @@ private struct StarterStep: View {
             }
             .padding(24)
         }
-        .sheet(isPresented: $showSaveSheet) {
+        .fullScreenCover(isPresented: $showSaveSheet) {
             SaveSheet(onSaved: {})
         }
         .task { await load() }

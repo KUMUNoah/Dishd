@@ -69,7 +69,7 @@ struct CollectionView: View {
                 }
                 .plainToolbarItem()
             }
-            .sheet(isPresented: $showSaveSheet) {
+            .fullScreenCover(isPresented: $showSaveSheet) {
                 SaveSheet(onSaved: { Task { await load() } },
                           onQuickPost: { recipe in quickPostRecipe = recipe })
                     .zoomsFrom("create", in: zoomNS)

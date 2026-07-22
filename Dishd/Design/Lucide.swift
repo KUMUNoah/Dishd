@@ -27,6 +27,7 @@ enum Lucide {
     static let heartFill = "heart-fill"
     static let house = "house"
     static let image = "image"
+    static let link = "link"
     static let lock = "lock"
     static let playCircle = "circle-play"
     static let plus = "plus"
