@@ -6,8 +6,12 @@
 -- internet". Before this migration they could read every profile, every
 -- public user's reviews (photos + notes), and every save.
 --
--- Run once in the Supabase SQL editor.
+-- Run in the Supabase SQL editor. Safe to re-run: every statement is
+-- idempotent, and the whole file executes as one transaction, so a failure
+-- anywhere rolls back everything rather than leaving the DB half-migrated.
 -- ============================================================
+
+begin;
 
 -- 1) can_view: a null viewer is never allowed. This is the single rule
 --    reviews, saves and follows all funnel through.
@@ -87,7 +91,24 @@ update storage.buckets
 --    deleting their account erased every report they had filed — abuse
 --    evidence disappearing on request. Keep the report, drop the identity.
 alter table public.reports alter column reporter_id drop not null;
-alter table public.reports drop constraint if exists reports_reporter_id_fkey;
+
+-- Drop by whatever Postgres actually named the FK, not the conventional
+-- name — guessing wrong would leave the cascade in place silently.
+do $$
+declare fk text;
+begin
+  select conname into fk
+    from pg_constraint
+   where conrelid = 'public.reports'::regclass
+     and contype = 'f'
+     and conkey = array[(select attnum from pg_attribute
+                          where attrelid = 'public.reports'::regclass
+                            and attname = 'reporter_id')];
+  if fk is not null then
+    execute format('alter table public.reports drop constraint %I', fk);
+  end if;
+end $$;
+
 alter table public.reports add constraint reports_reporter_id_fkey
   foreign key (reporter_id) references public.profiles(id) on delete set null;
 
@@ -128,3 +149,23 @@ alter table public.profiles add constraint profiles_full_name_len
 alter table public.reports drop constraint if exists reports_reason_len;
 alter table public.reports add constraint reports_reason_len
   check (reason is null or length(reason) <= 500);
+
+-- Fail loudly if anything above silently no-opped.
+do $$
+begin
+  if (select count(*) from pg_policies
+       where schemaname = 'public' and tablename = 'profiles'
+         and policyname = 'profiles_select'
+         and qual like '%auth.uid() IS NOT NULL%') = 0 then
+    raise exception 'profiles_select did not pick up the auth requirement';
+  end if;
+  if not exists (select 1 from pg_proc where proname = 'username_available') then
+    raise exception 'username_available was not created';
+  end if;
+  if exists (select 1 from public.recipes
+              where source_url is not null and source_url !~* '^https?://') then
+    raise exception 'non-http source_url rows survived';
+  end if;
+end $$;
+
+commit;
