@@ -32,6 +32,7 @@ struct SaveSheet: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                PageHeader(title: "Add a recipe", icon: Lucide.x) { dismiss() }
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         SegmentedChips(options: SaveSheetMode.allCases.map { ($0.rawValue, $0.rawValue) },
@@ -79,19 +80,7 @@ struct SaveSheet: View {
                 submitBar
             }
             .background(DishdColor.screen.ignoresSafeArea())
-            .navigationTitle("Add a recipe")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(DishdColor.screen, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { dismiss() } label: {
-                        Icon(Lucide.x, size: 34)
-                            .foregroundStyle(DishdColor.espresso)
-                    }
-                }
-                .plainToolbarItem()
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .task { await detectLink() }
             .onChange(of: link) { Task { await detectLink() } }
             .onChange(of: mode) { errorMessage = nil }

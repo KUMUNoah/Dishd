@@ -12,7 +12,6 @@ struct ProfileView: View {
     @State private var section = "history"
     @State private var reviews: [ProfileReview] = []
     @State private var saves: [SavedRecipe] = []
-    @State private var showSettings = false
     @State private var isBlocked = false
     @State private var confirmingBlock = false
     @State private var reportingUser = false
@@ -31,11 +30,10 @@ struct ProfileView: View {
                     // strip for content to get cut off under.
                     HStack {
                         Spacer()
-                        Button { showSettings = true } label: {
+                        NavigationLink { SettingsView() } label: {
                             Icon(Lucide.settings, size: 34)
                                 .foregroundStyle(DishdColor.espresso)
                         }
-                        .zoomSource("settings", in: zoomNS)
                     }
                     .padding(.horizontal, 28)
                     .padding(.top, 8)
@@ -94,10 +92,6 @@ struct ProfileView: View {
         }
         .alert("Thanks — we'll take a look.", isPresented: $reportThanks) {
             Button("OK") {}
-        }
-        .sheet(isPresented: $showSettings) {
-            SettingsSheet()
-                .zoomsFrom("settings", in: zoomNS)
         }
         .task { await load() }
         .onChange(of: section) { Task { await loadContent() } }
@@ -411,7 +405,7 @@ struct SettingsDivider: View {
     }
 }
 
-struct SettingsSheet: View {
+struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.dismiss) private var dismiss
     @State private var isPrivate = false
@@ -419,7 +413,8 @@ struct SettingsSheet: View {
     @State private var deleteFailed = false
 
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            PageHeader(title: "Settings", icon: Lucide.arrowLeft) { dismiss() }
             ScrollView {
                 VStack(alignment: .leading, spacing: 26) {
                     SettingsGroup("Account") {
@@ -488,18 +483,10 @@ struct SettingsSheet: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
             }
-            .background(DishdColor.screen.ignoresSafeArea())
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(DishdColor.screen, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
-                        .foregroundStyle(DishdColor.terracotta)
-                }
-                .plainToolbarItem()
-            }
+        }
+        .background(DishdColor.screen.ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
             .confirmationDialog(
                 "Delete your account? Your recipes, reviews, and followers are permanently erased. This can't be undone.",
                 isPresented: $confirmingDelete,
@@ -516,12 +503,11 @@ struct SettingsSheet: View {
                     }
                 }
             }
-        }
-        .alert("Couldn't delete your account. Check your connection and try again.",
-               isPresented: $deleteFailed) {
-            Button("OK", role: .cancel) {}
-        }
-        .onAppear { isPrivate = appState.profile?.isPrivate ?? false }
+            .alert("Couldn't delete your account. Check your connection and try again.",
+                   isPresented: $deleteFailed) {
+                Button("OK", role: .cancel) {}
+            }
+            .onAppear { isPrivate = appState.profile?.isPrivate ?? false }
     }
 
     private var chevron: some View {

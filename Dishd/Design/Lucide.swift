@@ -11,6 +11,7 @@ import SwiftUI
 /// so they stay stroked and colour alone carries their state.
 enum Lucide {
     static let bell = "bell"
+    static let arrowLeft = "arrow-left"
     static let ban = "ban"
     static let book = "book-open"
     static let bookmark = "bookmark"

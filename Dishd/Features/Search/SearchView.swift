@@ -30,8 +30,7 @@ struct SearchView: View {
             .background(DishdColor.screen.ignoresSafeArea())
             .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
             .onChange(of: query) { Task { await search() } }
         }
         .tint(DishdColor.terracotta)

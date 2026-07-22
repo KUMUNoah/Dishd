@@ -36,6 +36,7 @@
 		9ACABCC8376B7A54A7ED73C4 /* ReviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5236A67332A85767EA7C59C6 /* ReviewService.swift */; };
 		AAC4A03948E170050ABD1E1C /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C6424D5F787CEBEC943B6E /* OnboardingFlow.swift */; };
 		B40FDD94566C48A5503E256F /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB81D4F38A3552E467E907 /* CollectionView.swift */; };
+		B430689F324113173187359D /* PageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECACACDB51119E0962CE3983 /* PageHeader.swift */; };
 		B7B47AC4BE683BE1A78284E2 /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06B01E7E1569ACE6DD5F75D /* LogInView.swift */; };
 		B878839869DE661A67B46BCB /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8F008E7A297162599924C /* SignUpView.swift */; };
 		BBEA579EA2694B4F69591656 /* DishdApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949F16171722EBC33C7C5FDC /* DishdApp.swift */; };
@@ -94,6 +95,7 @@
 		D78DA7342B03C92740D07C4D /* YoungSerif-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YoungSerif-Regular.ttf"; sourceTree = "<group>"; };
 		E06B01E7E1569ACE6DD5F75D /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
 		EC5DB560EC5B50C2B0E1D17C /* FeedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCard.swift; sourceTree = "<group>"; };
+		ECACACDB51119E0962CE3983 /* PageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageHeader.swift; sourceTree = "<group>"; };
 		F4721FE9320A8158DDAF8A52 /* ReviewComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewComposerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -294,6 +296,7 @@
 				6EFC8FC09198B62B6E633B64 /* DishdTabBar.swift */,
 				EC5DB560EC5B50C2B0E1D17C /* FeedCard.swift */,
 				CE1D18C151ED819066E3AC65 /* ModerationSheet.swift */,
+				ECACACDB51119E0962CE3983 /* PageHeader.swift */,
 				8E15FF953A0325E990BBCDD4 /* PrimaryButton.swift */,
 				0A8D57E1ECF1641B238F4111 /* RecipeTile.swift */,
 				63D8848D646DD6CEDEAC6CC3 /* SegmentedChips.swift */,
@@ -396,6 +399,7 @@
 				9A6D01F26887DFA0176AAECF /* ModerationSheet.swift in Sources */,
 				005CDBFFCDDFBE0D739A8538 /* NotificationsView.swift in Sources */,
 				AAC4A03948E170050ABD1E1C /* OnboardingFlow.swift in Sources */,
+				B430689F324113173187359D /* PageHeader.swift in Sources */,
 				4A8437C2CE0A496235A95645 /* PrimaryButton.swift in Sources */,
 				C287C96AD837D3C53B0DD0FA /* ProfileView.swift in Sources */,
 				98F18FBD91BF90A6C05FBCD3 /* RecipeDetailView.swift in Sources */,
