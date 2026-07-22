@@ -8,8 +8,7 @@ struct StarRatingDisplay: View {
     var body: some View {
         HStack(spacing: 2) {
             ForEach(1...5, id: \.self) { star in
-                Image(systemName: star <= rating ? "star.fill" : "star")
-                    .font(.system(size: size))
+                Icon(star <= rating ? Lucide.starFill : Lucide.star, size: size)
                     .foregroundStyle(star <= rating ? DishdColor.terracotta : DishdColor.sand)
             }
         }
@@ -23,8 +22,7 @@ struct StarRatingInput: View {
     var body: some View {
         HStack(spacing: 10) {
             ForEach(1...5, id: \.self) { star in
-                Image(systemName: star <= rating ? "star.fill" : "star")
-                    .font(.system(size: 32))
+                Icon(star <= rating ? Lucide.starFill : Lucide.star, size: 32)
                     .foregroundStyle(star <= rating ? DishdColor.terracotta : DishdColor.sand)
                     .onTapGesture { rating = star }
             }

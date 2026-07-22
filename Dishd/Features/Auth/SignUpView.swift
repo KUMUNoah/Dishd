@@ -36,9 +36,9 @@ struct SignUpView: View {
                         .autocorrectionDisabled()
                         .onChange(of: username) { checkUsername() }
                     if usernameAvailable == true {
-                        Image(systemName: "checkmark").foregroundStyle(.green)
+                        Icon(Lucide.check).foregroundStyle(.green)
                     } else if usernameAvailable == false {
-                        Image(systemName: "xmark").foregroundStyle(DishdColor.tomato)
+                        Icon(Lucide.x).foregroundStyle(DishdColor.tomato)
                     }
                 }
                 .padding(14)
@@ -95,7 +95,7 @@ struct SignUpView: View {
             }
             .padding(24)
         }
-        .background(DishdColor.cream)
+        .background(DishdColor.screen)
         .navigationTitle("Create account")
         .navigationBarTitleDisplayMode(.inline)
     }

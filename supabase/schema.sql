@@ -285,6 +285,19 @@ create trigger on_like_created
   after insert on public.likes
   for each row execute function public.handle_new_like();
 
+-- ---------- GOALS (v2) ----------
+-- Personal cooking goals, set in onboarding, editable in Settings.
+-- Private to the owner; progress is computed client-side from reviews.
+create table public.goals (
+  user_id               uuid primary key references public.profiles on delete cascade,
+  cook_per_week         int not null check (cook_per_week between 1 and 21),
+  new_recipes_per_year  int not null check (new_recipes_per_year between 1 and 1000),
+  updated_at            timestamptz not null default now()
+);
+alter table public.goals enable row level security;
+create policy goals_own on public.goals
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- 5) Account deletion (App Store 5.1.1). Runs as definer so it can delete the
 --    auth.users row; profile + all app data cascade. Storage files can't be
 --    deleted from SQL (Supabase blocks it) — the client removes its own files

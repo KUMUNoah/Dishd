@@ -12,9 +12,9 @@ struct FeedCard: View {
     @State private var liked: Bool
     @State private var likeCount: Int
     @State private var reported = false
-    @State private var reportingReview = false
-    @State private var confirmingBlock = false
+    @State private var showModeration = false
     @State private var reportThanks = false
+    @Namespace private var zoomNS
 
     init(item: FeedItem, currentUserId: UUID?,
          onSave: @escaping () -> Void, onOpenRecipe: @escaping () -> Void,
@@ -37,8 +37,8 @@ struct FeedCard: View {
             footer
         }
         .background(DishdColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(DishdColor.border, lineWidth: 0.5))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(DishdColor.border, lineWidth: 1))
     }
 
     private var header: some View {
@@ -46,70 +46,42 @@ struct FeedCard: View {
             ZStack {
                 Circle().fill(DishdColor.honey)
                 Text(String(item.author.username.prefix(1)).uppercased())
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(DishdColor.espresso)
             }
-            .frame(width: 30, height: 30)
+            .frame(width: 39, height: 39)
 
             Text(item.author.username)
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(DishdColor.espresso)
 
             Text(item.createdAt.formatted(.relative(presentation: .named)))
-                .font(.system(size: 12))
+                .font(.system(size: 16))
                 .foregroundStyle(DishdColor.taupe)
 
             Spacer()
 
             if item.userId != currentUserId {
-                Menu {
-                    Button(role: .destructive) {
-                        reportingReview = true
-                    } label: {
-                        Label(reported ? "Reported" : "Report review", systemImage: "flag")
-                    }
-                    .disabled(reported)
-
-                    Button(role: .destructive) {
-                        confirmingBlock = true
-                    } label: {
-                        Label("Block @\(item.author.username)", systemImage: "hand.raised")
-                    }
+                Button {
+                    showModeration = true
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 14))
+                    Icon(Lucide.ellipsis, size: 26)
                         .foregroundStyle(DishdColor.taupe)
                         .padding(6)
                 }
+                .zoomSource("more", in: zoomNS)
             }
         }
-        .padding(12)
+        .padding(16)
         .contentShape(Rectangle())
         .onTapGesture { onOpenAuthor() }
-        .confirmationDialog(
-            "Why are you reporting this review?",
-            isPresented: $reportingReview, titleVisibility: .visible
-        ) {
-            ForEach(["Spam", "Inappropriate content", "Harassment", "Not a real review"], id: \.self) { reason in
-                Button(reason, role: .destructive) {
-                    Task {
-                        try? await SocialService.report(reviewId: item.id, reason: reason)
-                        reported = true
-                        reportThanks = true
-                    }
-                }
-            }
-        }
-        .confirmationDialog(
-            "Block @\(item.author.username)? You won't see each other's cooking.",
-            isPresented: $confirmingBlock, titleVisibility: .visible
-        ) {
-            Button("Block", role: .destructive) {
-                Task {
-                    try? await SocialService.block(item.userId)
-                    onModerated()
-                }
-            }
+        .sheet(isPresented: $showModeration) {
+            ModerationSheet(username: item.author.username,
+                            reviewId: item.id,
+                            userId: item.userId,
+                            onBlocked: onModerated,
+                            onReported: { reported = true; reportThanks = true })
+                .zoomsFrom("more", in: zoomNS)
         }
         .alert("Thanks — we'll take a look.", isPresented: $reportThanks) {
             Button("OK") {}
@@ -126,8 +98,7 @@ struct FeedCard: View {
             } else if item.recipe.sourceUrl != nil {
                 // Link exists but no thumbnail: designed placeholder.
                 VStack(spacing: 6) {
-                    Image(systemName: "play.circle")
-                        .font(.system(size: 30))
+                    Icon(Lucide.playCircle, size: 30)
                         .foregroundStyle(DishdColor.taupe)
                     Text("View original")
                         .font(.system(size: 13, weight: .semibold))
@@ -139,7 +110,7 @@ struct FeedCard: View {
             // No link at all (quick post): single photo, no second slide.
         }
         .tabViewStyle(.page(indexDisplayMode: item.recipe.sourceUrl == nil ? .never : .automatic))
-        .frame(height: 260)
+        .frame(height: 230)
     }
 
     private func slideImage(_ urlString: String) -> some View {
@@ -154,11 +125,11 @@ struct FeedCard: View {
 
     private var footer: some View {
         VStack(alignment: .leading, spacing: 8) {
-            StarRatingDisplay(rating: item.rating)
+            StarRatingDisplay(rating: item.rating, size: 21)
 
             if let notes = item.notes {
                 Text(notes)
-                    .font(.system(size: 14))
+                    .font(.system(size: 17))
                     .foregroundStyle(DishdColor.espresso)
                     .lineLimit(3)
             }
@@ -166,9 +137,8 @@ struct FeedCard: View {
             Button(action: onOpenRecipe) {
                 HStack(spacing: 4) {
                     Text(item.recipe.title)
-                        .font(.system(size: 14, weight: .semibold))
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: 17, weight: .semibold))
+                    Icon(Lucide.chevronRight, size: 17)
                 }
                 .foregroundStyle(DishdColor.terracotta)
             }
@@ -177,10 +147,10 @@ struct FeedCard: View {
                 if item.userId != currentUserId {
                     Button(action: onSave) {
                         Text("Save")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 7)
+                            .padding(.horizontal, 23)
+                            .padding(.vertical, 9)
                             .background(DishdColor.terracotta)
                             .clipShape(Capsule())
                     }
@@ -190,10 +160,9 @@ struct FeedCard: View {
                     Task { await toggleLike() }
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: liked ? "heart.fill" : "heart")
-                            .font(.system(size: 18))
+                        Icon(liked ? Lucide.heartFill : Lucide.heart, size: 25)
                         if likeCount > 0 {
-                            Text("\(likeCount)").font(.system(size: 13))
+                            Text("\(likeCount)").font(.system(size: 17))
                         }
                     }
                     .foregroundStyle(DishdColor.tomato)
@@ -203,7 +172,7 @@ struct FeedCard: View {
             }
             .padding(.top, 2)
         }
-        .padding(12)
+        .padding(16)
     }
 
     private func toggleLike() async {

@@ -70,3 +70,13 @@ struct Review: Codable, Identifiable, Hashable {
         case createdAt = "created_at"
     }
 }
+
+struct Goals: Codable, Hashable {
+    var cookPerWeek: Int
+    var newRecipesPerYear: Int
+
+    enum CodingKeys: String, CodingKey {
+        case cookPerWeek = "cook_per_week"
+        case newRecipesPerYear = "new_recipes_per_year"
+    }
+}

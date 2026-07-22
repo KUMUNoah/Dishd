@@ -79,8 +79,8 @@ struct RecipeDetailView: View {
             }
             .padding(20)
         }
-        .background(DishdColor.cream.ignoresSafeArea())
-        .toolbarBackground(DishdColor.cream, for: .navigationBar)
+        .background(DishdColor.screen.ignoresSafeArea())
+        .toolbarBackground(DishdColor.screen, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showComposer) {
@@ -106,8 +106,7 @@ struct RecipeDetailView: View {
             } else {
                 ZStack {
                     DishdColor.sand
-                    Image(systemName: "photo")
-                        .font(.system(size: 30))
+                    Icon(Lucide.image, size: 30)
                         .foregroundStyle(DishdColor.taupe)
                 }
             }

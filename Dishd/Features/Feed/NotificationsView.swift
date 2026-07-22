@@ -18,8 +18,7 @@ struct NotificationsView: View {
                     ProgressView().padding(.top, 60)
                 } else if notifications.isEmpty {
                     VStack(spacing: 6) {
-                        Image(systemName: "bell")
-                            .font(.system(size: 26))
+                        Icon(Lucide.bell, size: 26)
                             .foregroundStyle(DishdColor.taupe)
                         Text("Nothing yet")
                             .font(.system(size: 15, weight: .semibold))
@@ -39,8 +38,8 @@ struct NotificationsView: View {
             .padding(16)
             .frame(maxWidth: .infinity)
         }
-        .background(DishdColor.cream.ignoresSafeArea())
-        .toolbarBackground(DishdColor.cream, for: .navigationBar)
+        .background(DishdColor.screen.ignoresSafeArea())
+        .toolbarBackground(DishdColor.screen, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
@@ -79,8 +78,7 @@ struct NotificationsView: View {
                     withAnimation { notifications.removeAll { $0.id == notification.id } }
                 }
             } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 13))
+                Icon(Lucide.x, size: 13)
                     .foregroundStyle(DishdColor.taupe)
             }
         }
@@ -121,13 +119,13 @@ struct NotificationsView: View {
     private func icon(for type: String) -> some View {
         switch type {
         case "like":
-            Image(systemName: "heart.fill").foregroundStyle(DishdColor.tomato)
+            Icon(Lucide.heartFill).foregroundStyle(DishdColor.tomato)
         case "new_follower":
-            Image(systemName: "person.badge.plus").foregroundStyle(DishdColor.honey)
+            Icon(Lucide.userPlus).foregroundStyle(DishdColor.honey)
         case "save_from_profile":
-            Image(systemName: "bookmark.fill").foregroundStyle(DishdColor.terracotta)
+            Icon(Lucide.bookmarkFill).foregroundStyle(DishdColor.terracotta)
         default:
-            Image(systemName: "bell").foregroundStyle(DishdColor.taupe)
+            Icon(Lucide.bell).foregroundStyle(DishdColor.taupe)
         }
     }
 

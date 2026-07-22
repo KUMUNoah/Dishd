@@ -1,44 +1,35 @@
 import SwiftUI
 
+/// Custom tab container. Not a TabView: safeAreaInset on TabView doesn't
+/// reach the UIKit-managed pages, so content slid under the custom bar.
+/// Here the bar takes real layout space and pages can never underlap it.
+/// All four tabs stay mounted (opacity-swapped) so their state survives
+/// switching, same as TabView.
 struct MainTabView: View {
     @EnvironmentObject private var appState: AppState
-
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
+    @State private var tab: DishdTab = .feed
 
     var body: some View {
-        TabView {
-            FeedView()
-                .tabItem { Label("Feed", systemImage: "house") }
-
-            CollectionView()
-                .tabItem { Label("Recipes", systemImage: "book") }
-
-            SearchView()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-
-            ownProfile
-                .tabItem { Label("Profile", systemImage: "person") }
+        VStack(spacing: 0) {
+            ZStack {
+                FeedView()
+                    .opacity(tab == .feed ? 1 : 0)
+                    .allowsHitTesting(tab == .feed)
+                CollectionView()
+                    .opacity(tab == .recipes ? 1 : 0)
+                    .allowsHitTesting(tab == .recipes)
+                SearchView()
+                    .opacity(tab == .search ? 1 : 0)
+                    .allowsHitTesting(tab == .search)
+                ownProfile
+                    .opacity(tab == .profile ? 1 : 0)
+                    .allowsHitTesting(tab == .profile)
+            }
+            DishdTabBar(selection: $tab)
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)   // bar stays put under the keyboard
+        .background(DishdColor.screen.ignoresSafeArea())
         .tint(DishdColor.terracotta)
-    }
-
-    private func placeholder(_ title: String, note: String) -> some View {
-        VStack(spacing: 8) {
-            Text(title)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(DishdColor.espresso)
-            Text(note)
-                .font(.system(size: 14))
-                .foregroundStyle(DishdColor.taupe)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(DishdColor.cream)
     }
 
     private var ownProfile: some View {
@@ -48,7 +39,7 @@ struct MainTabView: View {
             } else {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(DishdColor.cream)
+                    .background(DishdColor.screen)
             }
         }
         .tint(DishdColor.terracotta)

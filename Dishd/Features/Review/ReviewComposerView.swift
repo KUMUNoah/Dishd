@@ -28,8 +28,7 @@ struct ReviewComposerView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
                         } else {
                             VStack(spacing: 6) {
-                                Image(systemName: "camera")
-                                    .font(.system(size: 28))
+                                Icon(Lucide.camera, size: 28)
                                     .foregroundStyle(DishdColor.terracotta)
                                 Text("Show how yours turned out")
                                     .font(.system(size: 15, weight: .semibold))
@@ -88,15 +87,15 @@ struct ReviewComposerView: View {
                 }
                 .padding(20)
             }
-            .background(DishdColor.cream.ignoresSafeArea())
-            .toolbarBackground(DishdColor.cream, for: .navigationBar)
+            .background(DishdColor.screen.ignoresSafeArea())
+            .toolbarBackground(DishdColor.screen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .navigationTitle(recipe.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
-                        Image(systemName: "xmark").foregroundStyle(DishdColor.espresso)
+                        Icon(Lucide.x).foregroundStyle(DishdColor.espresso)
                     }
                 }
             }

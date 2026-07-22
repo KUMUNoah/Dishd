@@ -1,24 +1,33 @@
 import SwiftUI
 
 struct CollectionView: View {
+    @Namespace private var zoomNS
     @State private var section = "want_to_make"
     @State private var saves: [SavedRecipe] = []
     @State private var isLoading = true
     @State private var showSaveSheet = false
     @State private var quickPostRecipe: Recipe?
 
-    private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+    private let columns = [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)]
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                Picker("Section", selection: $section) {
-                    Text("Want to make").tag("want_to_make")
-                    Text("Made").tag("made")
+                PageHeader(title: "Recipes") {
+                    Button {
+                        showSaveSheet = true
+                    } label: {
+                        // 2f: bare terracotta glyph, matching the 2c chrome.
+                        Icon(Lucide.plus, size: 36)
+                            .foregroundStyle(DishdColor.terracotta)
+                    }
+                    .zoomSource("create", in: zoomNS)
                 }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 12)
+
+                SegmentedChips(options: [("want_to_make", "Want to make"), ("made", "Made")],
+                               selection: $section)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
 
                 ScrollView {
                     if isLoading {
@@ -26,7 +35,7 @@ struct CollectionView: View {
                     } else if saves.isEmpty {
                         emptyState
                     } else {
-                        LazyVGrid(columns: columns, spacing: 12) {
+                        LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(saves) { save in
                                 NavigationLink {
                                     RecipeDetailView(recipe: save.recipe,
@@ -53,25 +62,12 @@ struct CollectionView: View {
                 }
                 .refreshable { await load() }
             }
-            .background(DishdColor.cream.ignoresSafeArea())
-            .toolbarBackground(DishdColor.cream, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .navigationTitle("Your recipes")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showSaveSheet = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundStyle(DishdColor.terracotta)
-                    }
-                }
-            }
-            .sheet(isPresented: $showSaveSheet) {
+            .background(DishdColor.screen.ignoresSafeArea())
+            .toolbar(.hidden, for: .navigationBar)
+            .fullScreenCover(isPresented: $showSaveSheet) {
                 SaveSheet(onSaved: { Task { await load() } },
                           onQuickPost: { recipe in quickPostRecipe = recipe })
+                    .zoomsFrom("create", in: zoomNS)
             }
             .sheet(item: $quickPostRecipe) { recipe in
                 ReviewComposerView(recipe: recipe) {
@@ -87,8 +83,7 @@ struct CollectionView: View {
 
     private var emptyState: some View {
         VStack(spacing: 8) {
-            Image(systemName: section == "want_to_make" ? "bookmark" : "frying.pan")
-                .font(.system(size: 30))
+            Icon(section == "want_to_make" ? Lucide.bookmark : Lucide.cookingPot, size: 30)
                 .foregroundStyle(DishdColor.taupe)
             Text(section == "want_to_make" ? "Nothing saved yet" : "Nothing made yet")
                 .font(.system(size: 16, weight: .semibold))

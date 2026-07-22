@@ -42,8 +42,7 @@ struct FollowListView: View {
                                     .foregroundStyle(DishdColor.taupe)
                             }
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12))
+                            Icon(Lucide.chevronRight, size: 12)
                                 .foregroundStyle(DishdColor.taupe)
                         }
                         .padding(12)
@@ -57,7 +56,7 @@ struct FollowListView: View {
             .padding(16)
             .frame(maxWidth: .infinity)
         }
-        .background(DishdColor.cream.ignoresSafeArea())
+        .background(DishdColor.screen.ignoresSafeArea())
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .task {

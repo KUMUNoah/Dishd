@@ -40,7 +40,7 @@ struct LogInView: View {
             Spacer()
         }
         .padding(24)
-        .background(DishdColor.cream)
+        .background(DishdColor.screen)
         .navigationTitle("Log in")
         .navigationBarTitleDisplayMode(.inline)
     }

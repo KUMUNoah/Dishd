@@ -12,11 +12,11 @@ struct ProfileView: View {
     @State private var section = "history"
     @State private var reviews: [ProfileReview] = []
     @State private var saves: [SavedRecipe] = []
-    @State private var showSettings = false
     @State private var isBlocked = false
     @State private var confirmingBlock = false
     @State private var reportingUser = false
     @State private var reportThanks = false
+    @Namespace private var zoomNS
 
     private var contentVisible: Bool {
         !isBlocked && (isOwn || !profile.isPrivate || followState == .following)
@@ -24,93 +24,80 @@ struct ProfileView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-                header
-
-                if isBlocked {
-                    blockedState
-                } else if contentVisible {
-                    Picker("Section", selection: $section) {
-                        Text("History").tag("history")
-                        Text("Recipes").tag("recipes")
+            VStack(spacing: 0) {
+                if isOwn {
+                    // 2h: the gear lives in the page, not a nav bar — no white
+                    // strip for content to get cut off under. Its own tight
+                    // padding keeps the avatar near the top, per the mockup.
+                    HStack {
+                        Spacer()
+                        NavigationLink { SettingsView() } label: {
+                            Icon(Lucide.settings, size: 34)
+                                .foregroundStyle(DishdColor.espresso)
+                        }
                     }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal, 16)
-
-                    if section == "history" {
-                        historyList
-                    } else {
-                        recipeGrid
-                    }
-                } else {
-                    lockState
+                    .padding(.horizontal, 28)
+                    .padding(.top, 10)
+                    .padding(.bottom, 4)
                 }
+
+                VStack(spacing: 16) {
+                    header
+
+                    if isOwn {
+                        GoalsCard()
+                    }
+
+                    if isBlocked {
+                        blockedState
+                    } else if contentVisible {
+                        SegmentedChips(options: [("history", "History"), ("recipes", "Recipes")],
+                                       selection: $section)
+                            .padding(.horizontal, 16)
+
+                        if section == "history" {
+                            historyList
+                        } else {
+                            recipeGrid
+                        }
+                    } else {
+                        lockState
+                    }
+                }
+                .padding(.top, isOwn ? 0 : 12)
+                .padding(.bottom, 12)
             }
-            .padding(.vertical, 12)
         }
-        .background(DishdColor.cream.ignoresSafeArea())
-        .toolbarBackground(DishdColor.cream, for: .navigationBar)
+        .background(DishdColor.screen.ignoresSafeArea())
+        .toolbarBackground(DishdColor.screen, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isOwn ? .hidden : .automatic, for: .navigationBar)
         .toolbar {
-            if isOwn {
+            if !isOwn {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showSettings = true } label: {
-                        Image(systemName: "gearshape")
+                    Button { reportingUser = true } label: {
+                        Icon(Lucide.ellipsis, size: 34)
                             .foregroundStyle(DishdColor.espresso)
                     }
+                    .zoomSource("report", in: zoomNS)
                 }
-            } else {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button(role: .destructive) {
-                            reportingUser = true
-                        } label: {
-                            Label("Report user", systemImage: "flag")
-                        }
-                        if !isBlocked {
-                            Button(role: .destructive) {
-                                confirmingBlock = true
-                            } label: {
-                                Label("Block @\(profile.username)", systemImage: "hand.raised")
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .foregroundStyle(DishdColor.espresso)
-                    }
-                }
+                .plainToolbarItem()
             }
         }
-        .confirmationDialog(
-            "Block @\(profile.username)? You won't see each other's cooking, and they won't be able to follow you.",
-            isPresented: $confirmingBlock, titleVisibility: .visible
-        ) {
-            Button("Block", role: .destructive) {
-                Task {
-                    try? await SocialService.block(profile.id)
-                    followState = .notFollowing
-                    isBlocked = true
-                }
-            }
-        }
-        .confirmationDialog(
-            "Why are you reporting @\(profile.username)?",
-            isPresented: $reportingUser, titleVisibility: .visible
-        ) {
-            ForEach(["Spam", "Inappropriate content", "Harassment", "Fake account"], id: \.self) { reason in
-                Button(reason, role: .destructive) {
-                    Task {
-                        try? await SocialService.report(userId: profile.id, reason: reason)
-                        reportThanks = true
-                    }
-                }
-            }
+        .sheet(isPresented: $reportingUser) {
+            ModerationSheet(username: profile.username,
+                            userId: profile.id,
+                            onBlocked: {
+                                followState = .notFollowing
+                                isBlocked = true
+                            },
+                            onReported: { reportThanks = true })
+                .zoomsFrom("report", in: zoomNS)
         }
         .alert("Thanks — we'll take a look.", isPresented: $reportThanks) {
             Button("OK") {}
         }
-        .sheet(isPresented: $showSettings) { SettingsSheet() }
         .task { await load() }
         .onChange(of: section) { Task { await loadContent() } }
     }
@@ -120,24 +107,24 @@ struct ProfileView: View {
             ZStack {
                 Circle().fill(DishdColor.honey)
                 Text(String(profile.username.prefix(1)).uppercased())
-                    .font(.system(size: 26, weight: .semibold))
+                    .font(.system(size: 34, weight: .semibold))
                     .foregroundStyle(DishdColor.espresso)
             }
-            .frame(width: 72, height: 72)
+            .frame(width: 94, height: 94)
 
             VStack(spacing: 2) {
                 if let name = profile.fullName {
                     Text(name)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 22, weight: .semibold))
                         .foregroundStyle(DishdColor.espresso)
                 }
                 HStack(spacing: 4) {
                     Text("@\(profile.username)")
                     if profile.isPrivate {
-                        Image(systemName: "lock.fill").font(.system(size: 10))
+                        Icon(Lucide.lock, size: 11)
                     }
                 }
-                .font(.system(size: 13))
+                .font(.system(size: 17))
                 .foregroundStyle(DishdColor.taupe)
             }
 
@@ -149,7 +136,7 @@ struct ProfileView: View {
                     .padding(.horizontal, 40)
             }
 
-            HStack(spacing: 28) {
+            HStack(spacing: 38) {
                 stat(stats.made, "made")
                 if contentVisible {
                     NavigationLink {
@@ -199,10 +186,10 @@ struct ProfileView: View {
     private func stat(_ value: Int, _ label: String) -> some View {
         VStack(spacing: 1) {
             Text("\(value)")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 21, weight: .semibold))
                 .foregroundStyle(DishdColor.espresso)
             Text(label)
-                .font(.system(size: 12))
+                .font(.system(size: 16))
                 .foregroundStyle(DishdColor.taupe)
         }
     }
@@ -213,10 +200,10 @@ struct ProfileView: View {
         } label: {
             Text(followState == .following ? "Following"
                  : followState == .pending ? "Requested" : "Follow")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(followState == .notFollowing ? .white : DishdColor.taupe)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 9)
+                .padding(.horizontal, 40)
+                .padding(.vertical, 11)
                 .background(followState == .notFollowing ? DishdColor.terracotta : DishdColor.sand)
                 .clipShape(Capsule())
         }
@@ -224,8 +211,7 @@ struct ProfileView: View {
 
     private var blockedState: some View {
         VStack(spacing: 8) {
-            Image(systemName: "hand.raised")
-                .font(.system(size: 26))
+            Icon(Lucide.ban, size: 26)
                 .foregroundStyle(DishdColor.taupe)
             Text("You've blocked @\(profile.username)")
                 .font(.system(size: 15, weight: .semibold))
@@ -245,8 +231,7 @@ struct ProfileView: View {
 
     private var lockState: some View {
         VStack(spacing: 8) {
-            Image(systemName: "lock")
-                .font(.system(size: 26))
+            Icon(Lucide.lock, size: 26)
                 .foregroundStyle(DishdColor.taupe)
             Text("Follow to see their cooking")
                 .font(.system(size: 15, weight: .semibold))
@@ -351,7 +336,81 @@ struct ProfileView: View {
     }
 }
 
-struct SettingsSheet: View {
+// MARK: - Settings building blocks (2d: grouped cream cards, no stock list)
+
+/// Uppercase taupe section label above a cream card.
+struct SettingsGroup<Content: View>: View {
+    let title: String
+    @ViewBuilder var content: Content
+
+    init(_ title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title.uppercased())
+                .font(.system(size: 14, weight: .semibold))
+                .kerning(0.84)
+                .foregroundStyle(DishdColor.taupe)
+                .padding(.horizontal, 4)
+            VStack(spacing: 0) { content }
+                .background(DishdColor.card)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .overlay(RoundedRectangle(cornerRadius: 24).stroke(DishdColor.border, lineWidth: 1))
+        }
+    }
+}
+
+struct SettingsRow<Accessory: View>: View {
+    let icon: String
+    let title: String
+    var subtitle: String?
+    @ViewBuilder var accessory: Accessory
+
+    init(icon: String, title: String, subtitle: String? = nil,
+         @ViewBuilder accessory: () -> Accessory) {
+        self.icon = icon
+        self.title = title
+        self.subtitle = subtitle
+        self.accessory = accessory()
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Icon(icon, size: 27)
+                .foregroundStyle(DishdColor.terracotta)
+                .frame(width: 30)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(DishdColor.espresso)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.system(size: 15))
+                        .foregroundStyle(DishdColor.taupe)
+                }
+            }
+            Spacer(minLength: 8)
+            accessory
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 17)
+        .contentShape(Rectangle())
+    }
+}
+
+struct SettingsDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(DishdColor.border)
+            .frame(height: 1)
+            .padding(.horizontal, 18)
+    }
+}
+
+struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.dismiss) private var dismiss
     @State private var isPrivate = false
@@ -359,52 +418,80 @@ struct SettingsSheet: View {
     @State private var deleteFailed = false
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Account") {
-                    Toggle(isOn: $isPrivate) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Private account")
-                            Text("Only approved followers see your cooking")
-                                .font(.system(size: 12))
-                                .foregroundStyle(DishdColor.taupe)
+        VStack(spacing: 0) {
+            PageHeader(title: "Settings", icon: Lucide.arrowLeft) { dismiss() }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 26) {
+                    SettingsGroup("Account") {
+                        SettingsRow(icon: Lucide.lock, title: "Private account",
+                                    subtitle: "Only approved followers see your cooking") {
+                            Toggle("", isOn: $isPrivate)
+                                .labelsHidden()
+                                .tint(DishdColor.terracotta)
+                                .onChange(of: isPrivate) {
+                                    Task {
+                                        try? await SocialService.setPrivate(isPrivate)
+                                        await appState.loadProfile()
+                                    }
+                                }
+                        }
+                        SettingsDivider()
+                        NavigationLink { GoalsEditorView() } label: {
+                            SettingsRow(icon: Lucide.flag, title: "Cooking goals") { chevron }
                         }
                     }
-                    .tint(DishdColor.terracotta)
-                    .onChange(of: isPrivate) {
-                        Task {
-                            try? await SocialService.setPrivate(isPrivate)
-                            await appState.loadProfile()
-                        }
-                    }
-                }
-                Section("Privacy and safety") {
-                    NavigationLink("Blocked users") {
-                        BlockedUsersView()
-                    }
-                }
-                Section("About") {
-                    Link("Terms of Service", destination: Legal.termsURL)
-                    Link("Privacy Policy", destination: Legal.privacyURL)
-                }
-                Section {
-                    Button("Log out") {
-                        Task { await appState.signOut() }
-                    }
-                    .foregroundStyle(DishdColor.terracotta)
 
-                    Button("Delete account", role: .destructive) {
-                        confirmingDelete = true
+                    SettingsGroup("Privacy and safety") {
+                        NavigationLink { BlockedUsersView() } label: {
+                            SettingsRow(icon: Lucide.ban, title: "Blocked users") { chevron }
+                        }
                     }
+
+                    SettingsGroup("About") {
+                        Link(destination: Legal.termsURL) {
+                            SettingsRow(icon: Lucide.fileText, title: "Terms of Service") { linkGlyph }
+                        }
+                        SettingsDivider()
+                        Link(destination: Legal.privacyURL) {
+                            SettingsRow(icon: Lucide.shield, title: "Privacy Policy") { linkGlyph }
+                        }
+                    }
+
+                    VStack(spacing: 9) {
+                        Button {
+                            Task { await appState.signOut() }
+                        } label: {
+                            Text("Log out")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(DishdColor.terracotta)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(DishdColor.card)
+                                .clipShape(RoundedRectangle(cornerRadius: 18))
+                                .overlay(RoundedRectangle(cornerRadius: 18)
+                                    .stroke(DishdColor.border, lineWidth: 1))
+                        }
+                        Button {
+                            confirmingDelete = true
+                        } label: {
+                            Text("Delete account")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(DishdColor.tomato)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .overlay(RoundedRectangle(cornerRadius: 18)
+                                    .stroke(DishdColor.dangerBorder, lineWidth: 1))
+                        }
+                    }
+                    .padding(.top, 2)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
             }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
-                }
-            }
+        }
+        .background(DishdColor.screen.ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
             .confirmationDialog(
                 "Delete your account? Your recipes, reviews, and followers are permanently erased. This can't be undone.",
                 isPresented: $confirmingDelete,
@@ -421,12 +508,21 @@ struct SettingsSheet: View {
                     }
                 }
             }
-        }
-        .alert("Couldn't delete your account. Check your connection and try again.",
-               isPresented: $deleteFailed) {
-            Button("OK", role: .cancel) {}
-        }
-        .onAppear { isPrivate = appState.profile?.isPrivate ?? false }
+            .alert("Couldn't delete your account. Check your connection and try again.",
+                   isPresented: $deleteFailed) {
+                Button("OK", role: .cancel) {}
+            }
+            .onAppear { isPrivate = appState.profile?.isPrivate ?? false }
+    }
+
+    private var chevron: some View {
+        Icon(Lucide.chevronRight, size: 18)
+            .foregroundStyle(DishdColor.chevron)
+    }
+
+    private var linkGlyph: some View {
+        Icon(Lucide.externalLink, size: 18)
+            .foregroundStyle(DishdColor.chevron)
     }
 }
 
