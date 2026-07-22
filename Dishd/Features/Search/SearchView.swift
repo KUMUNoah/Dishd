@@ -6,6 +6,38 @@ struct SearchView: View {
 
     var body: some View {
         NavigationStack {
+            VStack(spacing: 0) {
+                // 2g: cream search field at the top. Not .searchable — iOS 26
+                // docks that at the bottom, under the custom tab bar.
+                HStack(spacing: 12) {
+                    Icon(Lucide.search, size: 26)
+                        .foregroundStyle(DishdColor.taupe)
+                    TextField("Search usernames", text: $query)
+                        .font(.system(size: 18))
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+                .padding(.horizontal, 18)
+                .padding(.vertical, 14)
+                .background(DishdColor.card)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .overlay(RoundedRectangle(cornerRadius: 18).stroke(DishdColor.border, lineWidth: 1))
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
+
+                searchResults
+            }
+            .background(DishdColor.screen.ignoresSafeArea())
+            .toolbarBackground(DishdColor.screen, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .navigationTitle("Search")
+            .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: query) { Task { await search() } }
+        }
+        .tint(DishdColor.terracotta)
+    }
+
+    private var searchResults: some View {
             ScrollView {
                 VStack(spacing: 10) {
                     if results.isEmpty && !query.isEmpty {
@@ -52,15 +84,6 @@ struct SearchView: View {
                 .padding(16)
                 .frame(maxWidth: .infinity)
             }
-            .background(DishdColor.screen.ignoresSafeArea())
-            .toolbarBackground(DishdColor.screen, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $query, prompt: "Search usernames")
-            .onChange(of: query) { Task { await search() } }
-        }
-        .tint(DishdColor.terracotta)
     }
 
     private func search() async {
